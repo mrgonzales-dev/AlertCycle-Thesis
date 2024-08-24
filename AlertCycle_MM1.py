@@ -149,7 +149,6 @@ def face_data(image, CallOut, Distance_level):
 ref_image = cv2.imread("./src/reference_images.jpg")
 
 ref_image_face_width, _, _, _ = face_data(ref_image, False, Distance_level)
-
 Focal_length_found = FocalLength(known_distance, known_width, ref_image_face_width)
 print(Focal_length_found)
 
@@ -177,17 +176,14 @@ while True:
         # int((y1 + y2) / 2) #
         #NOTE: END OF FORMULA >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
-
-
         label = yolo_detections['name'][index]
         cv2.rectangle(frame, (x1, y1), (x2, y2), (255, 255, 0), 2)
         cv2.putText(frame, label, (x1, y1 - 5),
                     cv2.FONT_HERSHEY_PLAIN, 2, (255, 255, 0), 2)
 
 
-    #HACK: change to vehicle data
+    #HACK: Change to vehicle data
     face_width_in_frame, faces, FC_X, FC_Y = face_data(frame, True, Distance_level)
-
  
     for (face_x, face_y, face_w, face_h) in faces:
         if face_width_in_frame != 0:
