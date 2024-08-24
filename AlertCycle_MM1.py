@@ -1,10 +1,24 @@
 import cv2
+import torch
+
+
+#HACK: Integration of yolov5-lite <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+model = torch.hub.load('./yolo_models/yolov5', 'yolov5s', pretrained=True, force_reload=True, source='local')
+
+# # Check if CUDA is available and transfer model to GPU
+# if torch.cuda.is_available():
+#     model = model.to('cuda')
+# else:
+#     print("CUDA is not available. Using CPU.")
+
+#HACK: >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
 
 #TODO:
 #---------------------------
 # REFACTOR CODE TO A BETTER STRUCTURE AND FASTER ALGORITHM
 #---------------------------
-# Add yolov5.lite for detection of cars 
+# Add yolov5-lite for detection of cars 
 #---------------------------
 # Use and Add Sql-Lite database for the detection of cars and its corresponding height and width
 #---------------------------
@@ -40,24 +54,23 @@ fonts4 = cv2.FONT_HERSHEY_TRIPLEX
 #>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 # Declare Camera Object
-cap = cv2.VideoCapture(0)  # Number According to your Camera
+cap = cv2.VideoCapture(1)  # Number According to your Camera
 Distance_level = 0
+
 
 #TODO: Learn topics that are not familiar here --------------
 #HACK: To learn about this topic..
 # Define the codec and create VideoWriter object
-fourcc = cv2.VideoWriter_fourcc(*"XVID") #CODED
+fourcc = cv2.VideoWriter_fourcc(*"MP4V") #CODEC
 out = cv2.VideoWriter ("./src/output.mp4", fourcc, 30.0, (640, 480))
 
 
-#HACK: Learn about how this work
-# face detector object
+#HACK: #1 Learn about how this work: face detection <<<<<<<<<<
 face_detector = cv2.CascadeClassifier("./src/haarcascade_frontalface_default.xml")
-#----------------------------------------------------------
+#HACK: END OF HACK #1 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 #NOTE: MAIN FORMULAS 
-
-#<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+#<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 def FocalLength(measured_distance, real_width, width_in_rf_image):
     focal_length = (width_in_rf_image * measured_distance) / real_width
     return focal_length
@@ -65,11 +78,9 @@ def FocalLength(measured_distance, real_width, width_in_rf_image):
 def Distance_finder(Focal_Length, real_face_width, face_width_in_frame):
     distance = (real_face_width * Focal_Length) / face_width_in_frame
     return distance
-#<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+#NOTE: END OF MAIN FORMULAS <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
-#NOTE: UI/UX Components
-
-#<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+#NOTE: UI/UX Components <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 def WarningMessage():
     
     # Define the text to display
@@ -88,11 +99,9 @@ def WarningMessage():
     text_x = 10
     text_y = 30  # Adjust to ensure the text is within the frame
 
-
     # Put the text on the frame
     cv2.putText(frame, text, (text_x, text_y), fonts, font_scale, font_color, thickness, line_type)
  
-
 def face_data(image, CallOut, Distance_level):
     face_width = 0
     face_x, face_y = 0, 0
@@ -100,7 +109,6 @@ def face_data(image, CallOut, Distance_level):
     face_center_y = 0
     gray_image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
     faces = face_detector.detectMultiScale(gray_image, 1.3, 5)
-
 
     #Settings to change the color of the box around the face
     for (x, y, w, h) in faces:
@@ -135,7 +143,7 @@ def face_data(image, CallOut, Distance_level):
 
     return face_width, faces, face_center_x, face_center_y
 
-#>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+#NOTE: END OF UI >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> 
 
 
 ref_image = cv2.imread("./src/reference_images.jpg")
@@ -147,12 +155,32 @@ print(Focal_length_found)
 
 
 while True:
-    _, frame = cap.read()
+    ret, frame = cap.read()
     # calling face_data function
     # Distance_level = 0;
     
+    if not ret:
+        break
+
+    #NOTE: YoloV5s Face detection <<<<<<<<<<<<<
+    detection_results = model(frame)
+    yolo_detections = detection_results.pandas().xyxy[0]
+    #NOTE: END OF YOLOV5 Detection >>>>>>>>>>>>
+
+
+    for index in yolo_detections.index:
+        x1, y1 = int(yolo_detections['xmin'][index]), int(yolo_detections['ymin'][index])
+        x2, y2 = int(yolo_detections['xmax'][index]), int(yolo_detections['ymax'][index])
+        label = yolo_detections['name'][index]
+        cv2.rectangle(frame, (x1, y1), (x2, y2), (255, 255, 0), 2)
+        cv2.putText(frame, label, (x1, y1 - 5),
+                    cv2.FONT_HERSHEY_PLAIN, 2, (255, 255, 0), 2)
+
+
+    #HACK: change to vehicle data
     face_width_in_frame, faces, FC_X, FC_Y = face_data(frame, True, Distance_level)
 
+ 
     for (face_x, face_y, face_w, face_h) in faces:
         if face_width_in_frame != 0:
 
