@@ -5,11 +5,11 @@ import torch
 #HACK: Integration of yolov5-lite <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 model = torch.hub.load('./yolo_models/yolov5', 'yolov5s', pretrained=True, force_reload=True, source='local')
 
-# # Check if CUDA is available and transfer model to GPU
-# if torch.cuda.is_available():
-#     model = model.to('cuda')
-# else:
-#     print("CUDA is not available. Using CPU.")
+# Check if CUDA is available and transfer model to GPU
+if torch.cuda.is_available():
+    model = model.to('cuda')
+else:
+    print("CUDA is not available. Using CPU.")
 
 #HACK: >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
@@ -171,6 +171,14 @@ while True:
     for index in yolo_detections.index:
         x1, y1 = int(yolo_detections['xmin'][index]), int(yolo_detections['ymin'][index])
         x2, y2 = int(yolo_detections['xmax'][index]), int(yolo_detections['ymax'][index])
+        
+        #NOTE: FORMULA: To calculate the center of the object being detected <<<<<<<<
+        # int((x1 + x2) / 2) #
+        # int((y1 + y2) / 2) #
+        #NOTE: END OF FORMULA >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+
+
         label = yolo_detections['name'][index]
         cv2.rectangle(frame, (x1, y1), (x2, y2), (255, 255, 0), 2)
         cv2.putText(frame, label, (x1, y1 - 5),
