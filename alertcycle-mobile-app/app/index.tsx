@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { View, Text, StyleSheet, Image, Animated, ActivityIndicator } from 'react-native';
+import { View, Text, StyleSheet, Animated, ActivityIndicator } from 'react-native';
+import Svg, { Circle, ClipPath, Defs, G, Path, Image as SvgImage } from 'react-native-svg';
 
 const getObjectIcon = (objectClass) => {
   const icons = {
@@ -16,13 +17,91 @@ const getObjectIcon = (objectClass) => {
   return icons[objectClass.toLowerCase()] || require('../assets/icons/user.png');
 };
 
+const Radar = ({ coordinates, size = 400}) => {
+  const center = size / 2;
+  const maxCoordinate = 500;
+  const scaleFactor = center / maxCoordinate;
+  const gridDistances = [100, 200, 300, 400, 500, 600];
+  
+  // Size ratios (adjust these to change proportions)
+  const userIconSizeRatio = 0.3; // 20% of radar size
+  const objectIconSizeRatio = 0.2; // 6% of radar size
+  const strokeWidthRatio = 0.007; // 0.7% of radar size
+
+  // Calculated sizes
+  const userIconSize = size * userIconSizeRatio;
+  const objectIconSize = size * objectIconSizeRatio;
+  const strokeWidth = size * strokeWidthRatio;
+// M 0 0 L -16 8 A 1 1 0 0 0 16 8 L 0 0
+  return (
+    <Svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} style={styles.radarSvg}>
+      <Defs>
+        <ClipPath id="clip">
+          {/* Flip semicircle to bottom */}
+        <Path d={`M${center} ${center} L${center - 200} ${center + 200} A1 1 0 0 0 ${center + 200} ${center + 200} L${center} ${center} Z`} />
+        </ClipPath>
+      </Defs>
+
+      <G clipPath="url(#clip)">
+        {/* Background semicircle */}
+     <Path
+          d={`M${center} ${center} L${center - 200} ${center + 200} A1 1 0 0 0 ${center + 200} ${center + 200} L${center} ${center} Z`}
+          fill="rgba(0, 255, 0, 0.1)"
+          stroke="rgba(0, 255, 0, 0.3)"
+          strokeWidth={strokeWidth * 2}
+        />
+
+        {/* Grid lines (flipped) */}
+        {gridDistances.map((distance) => {
+          const r = distance * scaleFactor;
+          return (
+            <Path
+              key={`grid-${distance}`}
+              d={`M ${center - r} ${center} A${r} ${r} 0 0 0 ${center + r} ${center}`}
+              stroke="rgba(0, 255, 0, 0.2)"
+              strokeWidth={strokeWidth}
+              fill="none"
+            />
+          );
+        })}
+        })}
+
+        {/* Radar objects */}
+        {coordinates.filter(item => item.y < 0).map((item, index) => {
+          const x = center + item.x * scaleFactor - objectIconSize/2;
+          const y = center - item.y * scaleFactor - objectIconSize/2;
+          return (
+            <SvgImage
+              key={`obj-${index}`}
+              x={x}
+              y={y}
+              width={objectIconSize}
+              height={objectIconSize}
+              href={getObjectIcon(item.object_class)}
+              preserveAspectRatio="xMidYMid meet"
+            />
+          );
+        })}
+      </G>
+
+      {/* Centered user icon */}
+      <SvgImage
+        x={center - userIconSize/2}
+        y={center - userIconSize/2}
+        width={userIconSize}
+        height={userIconSize}
+        href={require('../assets/icons/user.png')}
+        preserveAspectRatio="xMidYMid meet"
+      />
+    </Svg>
+  );
+};
+
 export default function AlertCycle() {
   const [coordinates, setCoordinates] = useState([]);
   const [loading, setLoading] = useState(true);
   const [overallRisk, setOverallRisk] = useState(false);
   const scaleAnim = useRef(new Animated.Value(1)).current;
-  const maxCoordinate = 500; // Maximum distance from user
-  const radarSize = 300;     // Radar display size
 
   useEffect(() => {
     const hasHighRisk = coordinates.some(item => item.risk);
@@ -45,26 +124,12 @@ export default function AlertCycle() {
   }, [overallRisk]);
 
   useEffect(() => {
-    // Coordinates relative to user position (0,0)
     const hardcodedData = [
       { object_class: 'cylist', x: 150, y: -200, mDA: 10, risk: false },
-      { object_class: 'truck', x: -100, y: -250, mDA: 8, risk: true },
-      { object_class: 'ecar', x: 50, y: -150, mDA: 5, risk: false },
     ];
     setCoordinates(hardcodedData);
     setLoading(false);
   }, []);
-
-  const calculateRadarPosition = (coord, axis) => {
-    const center = radarSize / 2;
-    const scaleFactor = center / maxCoordinate;
-    let scaledCoord = coord * scaleFactor;
-    
-    // Invert y-axis to match radar display orientation
-    if (axis === 'y') scaledCoord = -scaledCoord;
-    
-    return center + scaledCoord - 15; // 15 is half icon size
-  };
 
   return (
     <View style={styles.container}>
@@ -77,57 +142,29 @@ export default function AlertCycle() {
         </Text>
       </Animated.View>
 
-      <View style={styles.radar_interface}>
-        <View style={styles.graphCanvas}>
-          {/* Semi-circle grid lines */}
-          <View style={[styles.gridLine, styles.gridMedium]} />
-          <View style={[styles.gridLine, styles.gridSmall]} />
-          
-          {/* Mask for upper half */}
-          <View style={styles.mask} />
+      <View style={styles.radarContainer}>
+        <Radar coordinates={coordinates} size={400} />
+      </View>
 
-          {/* Radar Objects (only show behind user - negative y values) */}
-          {coordinates.filter(item => item.y < 0).map((item, index) => (
-            <View key={`radar-${index}`} style={[styles.radarObject, {
-              left: calculateRadarPosition(item.x, 'x'),
-              top: calculateRadarPosition(item.y, 'y'),
-            }]}>
-              <Image
-                style={styles.radarIcon}
-                source={getObjectIcon(item.object_class)}
-                resizeMode="contain"
-              />
-            </View>
-          ))}
-        </View>
-
-        <View style={styles.imageContainer}>
-          <Image 
-            style={styles.bikeIcon} 
-            source={require('../assets/icons/user.png')} 
-            resizeMode="contain"
-          />
-        </View>
-
-        <View style={styles.coordinates}>
-          {loading ? (
-            <ActivityIndicator color="white" />
-          ) : coordinates.map((item, index) => (
-            <View key={index} style={styles.objectContainer}>
-              <Image
-                style={styles.objectIcon}
-                source={getObjectIcon(item.object_class)}
-                resizeMode="contain"
-              />
-              <Text style={[
-                styles.coordinateText,
-                item.risk ? styles.highRisk : styles.lowRisk
-              ]}>
-                {`${item.object_class} | (${item.x}, ${item.y}) | ${item.mDA}m`}
-              </Text>
-            </View>
-          ))}
-        </View>
+      <View style={styles.coordinates}>
+        {loading ? (
+          <ActivityIndicator color="white" />
+        ) : coordinates.map((item, index) => (
+          <View key={index} style={styles.objectContainer}>
+            <SvgImage
+              width={40}
+              height={40}
+              href={getObjectIcon(item.object_class)}
+              preserveAspectRatio="xMidYMid meet"
+            />
+            <Text style={[
+              styles.coordinateText,
+              item.risk ? styles.highRisk : styles.lowRisk
+            ]}>
+              {`${item.object_class} | (${item.x}, ${item.y}) | ${item.mDA}m`}
+            </Text>
+          </View>
+        ))}
       </View>
     </View>
   );
@@ -138,87 +175,48 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 20,
     backgroundColor: 'black',
+    alignItems: 'center',
   },
-  radar_interface: {
+  radarContainer: {
+    marginTop: 0,
+    alignItems: 'center',
+    width: 500,  // Control radar size here
+    height: '100%', // Control radar size here
+    border: '1px white solid',
+  },
+  radarSvg: {
     flex: 1,
-    flexDirection: 'column',
-    alignItems: 'center',
-    width: '100%',
-    marginVertical: 20,
-  },
-  graphCanvas: {
-    width: 300,
-    height: 300,
-    borderRadius: 150,
-    backgroundColor: 'rgba(0, 255, 0, 0.1)',
-    borderWidth: 2,
-    borderColor: 'rgba(0, 255, 0, 0.3)',
-    position: 'absolute',
-    overflow: 'hidden',
-  },
-  mask: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    height: '50%',
-    backgroundColor: 'black',
-  },
-  gridLine: {
-    position: 'absolute',
-    width: '100%',
-    height: '100%',
-    borderBottomLeftRadius: 150,
-    borderBottomRightRadius: 150,
-    borderWidth: 1,
-    borderColor: 'rgba(0, 255, 0, 0.2)',
-  },
-  gridMedium: {
-    width: '66%',
-    height: '66%',
-    top: '34%',
-    left: '17%',
-  },
-  gridSmall: {
-    width: '33%',
-    height: '33%',
-    top: '67%',
-    left: '33.5%',
-  },
-  radarObject: {
-    position: 'absolute',
-    width: 30,
-    height: 30,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  radarIcon: {
-    width: '100%',
-    height: '100%',
-  },
-  imageContainer: {
-    width: 300,
-    height: 300,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'transparent',
-  },
-  bikeIcon: {
-    width: 60,
-    height: 60,
   },
   coordinates: {
-    color: 'white',
-    fontSize: 18,
-    maxWidth: 600,
-    textAlign: 'left',
-    overflow: 'hidden',
-    maxHeight: 200,
-    backgroundColor: 'rgba(255, 255, 255, 0.3)',
-    borderRadius: 10,
-    padding: 10,
     width: '100%',
-    marginTop: 20,
+    padding: 10,
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    borderRadius: 10,
+  },
+  riskIndicator: {
+    padding: 10,
+    margin: 0,
+    borderRadius: 10,
+    marginVertical: 10,
+    alignItems: 'center',
+    border: '2px solid white',
+  },
+  riskText: {
+    color: 'white',
+    fontWeight: 'bold',
+    fontSize: 20,
+  },
+  objectContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginVertical: 5,
+    border: '2px solid white',
+  },
+  coordinateText: {
+    color: 'white',
+    marginLeft: 15,
+    fontSize: 16,
+    flexShrink: 1,
   },
   highRisk: {
     color: 'red',
@@ -227,35 +225,5 @@ const styles = StyleSheet.create({
   lowRisk: {
     color: 'green',
     fontWeight: 'bold',
-  },
-  riskIndicator: {
-    alignItems: 'center',
-    padding: 20,
-    borderRadius: 10,
-    marginVertical: 10,
-  },
-  riskText: {
-    color: 'white',
-    fontWeight: 'bold',
-    marginTop: 5,
-    fontSize: 20,
-  },
-  objectContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginVertical: 5,
-    padding: 5,
-  },
-  objectIcon: {
-    width: 40,
-    height: 40,
-    marginRight: 15,
-  },
-  coordinateText: {
-    padding: 8,
-    borderBottomWidth: 1,
-    borderBottomColor: '#ccc',
-    flexShrink: 1,
-    fontSize: 16,
   },
 });
