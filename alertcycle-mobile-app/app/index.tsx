@@ -17,11 +17,13 @@ const getObjectIcon = (objectClass) => {
   return icons[objectClass.toLowerCase()] || require('../assets/icons/user.png');
 };
 
-const Radar = ({ coordinates, size = 400}) => {
+var size = 300;
+
+const Radar = ({ coordinates, size}) => {
   const center = size / 2;
   const maxCoordinate = 500;
   const scaleFactor = center / maxCoordinate;
-  const gridDistances = [100, 200, 300, 400, 500, 600];
+  const gridDistances = [100, 200, 300, 400, 500, 600, 700, 800, 900, 1000,];
   
   // Size ratios (adjust these to change proportions)
   const userIconSizeRatio = 0.3; // 20% of radar size
@@ -143,53 +145,60 @@ export default function AlertCycle() {
       </Animated.View>
 
       <View style={styles.radarContainer}>
-        <Radar coordinates={coordinates} size={400} />
-      </View>
-
-      <View style={styles.coordinates}>
-        {loading ? (
-          <ActivityIndicator color="white" />
-        ) : coordinates.map((item, index) => (
-          <View key={index} style={styles.objectContainer}>
-            <SvgImage
-              width={40}
-              height={40}
-              href={getObjectIcon(item.object_class)}
-              preserveAspectRatio="xMidYMid meet"
-            />
-            <Text style={[
-              styles.coordinateText,
-              item.risk ? styles.highRisk : styles.lowRisk
-            ]}>
-              {`${item.object_class} | (${item.x}, ${item.y}) | ${item.mDA}m`}
-            </Text>
-          </View>
-        ))}
+        <Radar coordinates={coordinates} size={size} />
       </View>
     </View>
   );
 }
 
+// ================= COORDINATES ===================
+// <View style={styles.coordinates}>
+//   {loading ? (
+//     <ActivityIndicator color="white" />
+//   ) : coordinates.map((item, index) => (
+//     <View key={index} style={styles.objectContainer}>
+//       <SvgImage
+//         width={40}
+//         height={40}
+//         href={getObjectIcon(item.object_class)}
+//         preserveAspectRatio="xMidYMid meet"
+//       />
+//       <Text style={[
+//         styles.coordinateText,
+//         item.risk ? styles.highRisk : styles.lowRisk
+//       ]}>
+//         {`${item.object_class} | (${item.x}, ${item.y}) | ${item.mDA}m`}
+//       </Text>
+//     </View>
+//   ))}
+// </View>
+
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
     backgroundColor: 'black',
     alignItems: 'center',
+    width: "100%",
+    height: "100%",
   },
   radarContainer: {
     marginTop: 0,
     alignItems: 'center',
     width: 500,  // Control radar size here
-    height: '100%', // Control radar size here
+    height: 600, // Control radar size here
     border: '1px white solid',
+    borderWidth: 1,
+    borderColor: 'white',
+    borderRadius: '50%',
   },
   radarSvg: {
     flex: 1,
+    borderWidth: 1,
+    borderColor: 'white',
   },
   coordinates: {
     width: '100%',
-    padding: 10,
     backgroundColor: 'rgba(255, 255, 255, 0.1)',
     borderRadius: 10,
   },
