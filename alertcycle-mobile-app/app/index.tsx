@@ -6,7 +6,7 @@ const VehicleIcon = (VehiclesIcon) => {
   const icons = {
     bus: require('../assets/icons/bus.png'),
     car: require('../assets/icons/car.png'),
-    cylist: require('../assets/icons/cylist.png'),
+    cyclist: require('../assets/icons/cylist.png'),
     ecar: require('../assets/icons/e-car.png'),
     jeep: require('../assets/icons/jeep.png'),
     motor: require('../assets/icons/motor.png'),
@@ -14,14 +14,17 @@ const VehicleIcon = (VehiclesIcon) => {
     tricycle: require('../assets/icons/tricycle.png'),
     truck: require('../assets/icons/truck.png'),
   };
-  return icons[VehicleIcon.toLowerCase()] || require('../assets/icons/user.png');
+  return icons[VehiclesIcon.toLowerCase()] || require('../assets/icons/user.png');
 };
 
-const Radar = () => {
+const Radar = ({ coordinates }) => {
 
   const heightOfRadar = 30;
   const userIcon = require("../assets/icons/user.png"); // ✅ Import PNG
   
+  // Normalize function to fit coordinates in radar view (assuming width is 600px in Python)
+  const normalizePosition = (value) => (value / 600) * 28; // Scale to SVG range
+
   return (
     <View style={styles.radarContainer}>
       <Svg width="100%" height="100%" viewBox="-10 -0 20 20" preserveAspectRatio="xMidYMid meet">
@@ -69,6 +72,19 @@ const Radar = () => {
           height="10"
           preserveAspectRatio="xMidYMid slice"
         />
+
+       {/* Plot Vehicles Behind User */}
+        {coordinates.map((vehicle, index) => (
+          <Image
+            key={index}
+            href={VehicleIcon(vehicle.object_class)}
+            x={normalizePosition(vehicle.x) - 3} // Adjust to center icon
+            y={normalizePosition(vehicle.y) + 5} // Shift vehicles down
+            width="6"
+            height="6"
+            clipPath="url(#radarClip)"
+          />
+        ))}
       </Svg>
     </View>
   );
@@ -102,7 +118,9 @@ export default function AlertCycle() {
 
   useEffect(() => {
     const hardcodedData = [
-      { object_class: 'cylist', x: 150, y: -200, mDA: 10, risk: false },
+      { object_class: 'bus', x: -100, y: 100, mDA: 20, risk: true},
+      { object_class: 'truck', x: 0, y: 0, mDA: 30, risk: false },
+      { object_class: 'cyclist', x: 100, y: 0, mDA: 30, risk: false },
     ];
     setCoordinates(hardcodedData);
     setLoading(false);
@@ -126,7 +144,7 @@ export default function AlertCycle() {
 
   
       {/* ======= Radar Component====== */} 
-      <Radar />
+      <Radar coordinates={coordinates}/>
       {/* ====================== */} 
   
 
