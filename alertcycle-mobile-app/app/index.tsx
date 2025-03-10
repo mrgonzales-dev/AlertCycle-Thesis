@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { View, Text, StyleSheet, Animated, ActivityIndicator } from 'react-native';
-import Svg, { Circle, ClipPath, Defs, Path, Image as SvgImage, Line } from 'react-native-svg';
+import { View, Text, StyleSheet, Animated, ActivityIndicator} from 'react-native';
+import Svg, { Circle, ClipPath, Defs, Path, Image, Line, LinearGradient, Stop} from 'react-native-svg';
 
-const getObjectIcon = (objectClass) => {
+const VehicleIcon = (VehiclesIcon) => {
   const icons = {
     bus: require('../assets/icons/bus.png'),
     car: require('../assets/icons/car.png'),
@@ -14,57 +14,126 @@ const getObjectIcon = (objectClass) => {
     tricycle: require('../assets/icons/tricycle.png'),
     truck: require('../assets/icons/truck.png'),
   };
-  return icons[objectClass.toLowerCase()] || require('../assets/icons/user.png');
+  return icons[VehicleIcon.toLowerCase()] || require('../assets/icons/user.png');
 };
 
 const Radar = () => {
+
+  const heightOfRadar = 30;
+  const userIcon = require("../assets/icons/user.png"); // ✅ Import PNG
+  
   return (
     <View style={styles.radarContainer}>
-      <Svg width="100%" height="100%" viewBox="-10 -0 20 20">
+      <Svg width="100%" height="100%" viewBox="-10 -0 20 20" preserveAspectRatio="xMidYMid meet">
+        {/* Definitions Section */}
         <Defs>
+          {/* Gradient from Green to Red */}
+          <LinearGradient id="radarGradient" x1="0" y1="0" x2="0" y2={heightOfRadar} gradientUnits="userSpaceOnUse">
+            <Stop offset="0%" stopColor="green" />
+            <Stop offset="100%" stopColor="red" />
+          </LinearGradient>
+
           <ClipPath id="radarClip">
-            <Path d="M 0 0 L -10 5 A 1 20 0 0 0 10 5 Z" />
+            <Path d={`M 0 0 L -10 5 L -10 ${heightOfRadar} H 10 V 5 Z `} />
           </ClipPath>
         </Defs>
-        <Path id="mainradar" d="M 0 0 L -10 5 A 1 20 0 0 0 10 5 Z" fill="lime" stroke="green" strokeWidth="0.2" />
+        <Path id="mainradar" d={`M 0 0 L -10 5 L -10 ${heightOfRadar} H 10 V 5 Z`} fill="url(#radarGradient)" stroke="green" strokeWidth="0.2" />
  
         {/* Circle stretching from Origin 0,0*/}
-        <Circle cx="0" cy="0" r="3" stroke="green" strokeWidth="0.1" fill="none" clipPath="url(#radarClip)" />
-        <Circle cx="0" cy="0" r="6" stroke="green" strokeWidth="0.1" fill="none" clipPath="url(#radarClip)" />
-        <Circle cx="0" cy="0" r="9" stroke="green" strokeWidth="0.1" fill="none" clipPath="url(#radarClip)" />
-        <Circle cx="0" cy="0" r="12" stroke="green" strokeWidth="0.1" fill="none" clipPath="url(#radarClip)" />
-        <Circle cx="0" cy="0" r="15" stroke="green" strokeWidth="0.1" fill="none" clipPath="url(#radarClip)" />
-        <Circle cx="0" cy="0" r="18" stroke="green" strokeWidth="0.1" fill="none" clipPath="url(#radarClip)" />
-        <Circle cx="0" cy="0" r="21" stroke="green" strokeWidth="0.1" fill="none" clipPath="url(#radarClip)" />
- 
+        {[3, 6, 9, 12, 15, 18, 21, 23, 26, 28].map((radius, index) => (
+          <Circle key={index} cx="0" cy="0" r={radius} stroke="green" strokeWidth="0.1" fill="none" clipPath="url(#radarClip)" />
+        ))}
+        {/* Radial Lines */}
+        {[...Array(20)].map((_, i) => {
+          const angle = (i * 10 * Math.PI) / 180;
+          return (
+            <Line
+              key={i}
+              x1="0"
+              y1="0"
+              x2={Math.cos(angle) * 28}
+              y2={Math.sin(angle) * 28}
+              stroke="green"
+              strokeWidth="0.1"
+              clipPath="url(#radarClip)"
+            />
+          );
+        })}
 
-        {/* Negative X quadrant lines */}
-        <Line x1="0" y1="0" x2="0" y2="100%" stroke="green" strokeWidth="0.1" clipPath="url(#radarClip)" />
-        <Line x1="0" y1="0" x2="-5" y2="100%" stroke="green" strokeWidth="0.1" clipPath="url(#radarClip)" />
-        <Line x1="0" y1="0" x2="-10" y2="100%" stroke="green" strokeWidth="0.1" clipPath="url(#radarClip)" />
-        <Line x1="0" y1="0" x2="-15" y2="100%" stroke="green" strokeWidth="0.1" clipPath="url(#radarClip)" />
-        <Line x1="0" y1="0" x2="-20" y2="100%" stroke="green" strokeWidth="0.1" clipPath="url(#radarClip)" />
-        <Line x1="0" y1="0" x2="-25" y2="100%" stroke="green" strokeWidth="0.1" clipPath="url(#radarClip)" />
-        <Line x1="0" y1="0" x2="-30" y2="100%" stroke="green" strokeWidth="0.1" clipPath="url(#radarClip)" />
-        <Line x1="0" y1="0" x2="-35" y2="100%" stroke="green" strokeWidth="0.1" clipPath="url(#radarClip)" />
-        
-        {/* Positive X quadrant lines */}
-        <Line x1="0" y1="0" x2="5" y2="100%" stroke="green" strokeWidth="0.1" clipPath="url(#radarClip)" />
-        <Line x1="0" y1="0" x2="10" y2="100%" stroke="green" strokeWidth="0.1" clipPath="url(#radarClip)" />
-        <Line x1="0" y1="0" x2="15" y2="100%" stroke="green" strokeWidth="0.1" clipPath="url(#radarClip)" />
-        <Line x1="0" y1="0" x2="20" y2="100%" stroke="green" strokeWidth="0.1" clipPath="url(#radarClip)" />
-        <Line x1="0" y1="0" x2="25" y2="100%" stroke="green" strokeWidth="0.1" clipPath="url(#radarClip)" />
-        <Line x1="0" y1="0" x2="30" y2="100%" stroke="green" strokeWidth="0.1" clipPath="url(#radarClip)" />
-        <Line x1="0" y1="0" x2="35" y2="100%" stroke="green" strokeWidth="0.1" clipPath="url(#radarClip)" />
+        {/* 🔥 PNG Rendered at the Origin (Centered) */}
+        <Image
+          href={userIcon} // ✅ Correct image source
+          x="-5"  // ✅ Centering by adjusting position
+          y="-5"
+          width="10" // ✅ Adjusted size
+          height="10"
+          preserveAspectRatio="xMidYMid slice"
+        />
       </Svg>
     </View>
   );
 };
 
 export default function AlertCycle() {
+  const [coordinates, setCoordinates] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [overallRisk, setOverallRisk] = useState(false);
+  const scaleAnim = useRef(new Animated.Value(1)).current;
+
+  useEffect(() => {
+    const hasHighRisk = coordinates.some(item => item.risk);
+    setOverallRisk(hasHighRisk);
+  }, [coordinates]);
+
+  useEffect(() => {
+    Animated.sequence([
+      Animated.timing(scaleAnim, {
+        toValue: 1.3,
+        duration: 200,
+        useNativeDriver: true,
+      }),
+      Animated.timing(scaleAnim, {
+        toValue: 1,
+        duration: 200,
+        useNativeDriver: true,
+      })
+    ]).start();
+  }, [overallRisk]);
+
+  useEffect(() => {
+    const hardcodedData = [
+      { object_class: 'cylist', x: 150, y: -200, mDA: 10, risk: false },
+    ];
+    setCoordinates(hardcodedData);
+    setLoading(false);
+  }, []);
+
   return (
     <View style={styles.container}>
+     
+      {/* ===== Animated Risk Indicator ====== */} 
+      <View style={styles.RiskViewPort}>
+        <Animated.View style={[styles.riskIndicator, { 
+          transform: [{ scale: scaleAnim }],
+          backgroundColor: overallRisk ? 'rgba(255, 0, 0, 0.3)' : 'rgba(0, 255, 0, 0.3)'
+        }]}>
+          <Text style={styles.riskText}>
+            {overallRisk ? 'HIGH RISK!' : 'SAFE'}
+          </Text>
+        </Animated.View>
+      </View>
+      {/* ====================== */} 
+
+  
+      {/* ======= Radar Component====== */} 
       <Radar />
+      {/* ====================== */} 
+  
+
+      {/* ======= Cars Coordinates ====== */} 
+      <View style={styles.CoordinatesViewPort}>
+      </View>
+      {/* ====================== */} 
     </View>
   );
 }
@@ -74,19 +143,49 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: 'black',
     alignItems: 'center',
-    justifyContent: 'center',
     width: "100%",
     height: "100%",
-    borderWidth: 2,
-    borderColor: 'white',
+    // borderWidth: 2,
+    // borderColor: 'white',
+  },
+  RiskViewPort: {
+    flex: 1,
+    backgroundColor: 'black',
+    alignItems: 'center',
+    width: "100%",
+    height: "10%",
+    // borderWidth: 2,
+    // borderColor: 'white',
+    justifyContent: 'center',
   },
   radarContainer: {
-    borderWidth: 2,
-    width: "90%",
-    height: "50%",
+    width: "100%",
+    height: "90%",
     padding: 0,
-    borderColor: 'white',
+    // borderWidth: 2,
+    // borderColor: 'white',
     alignItems: 'center',
     justifyContent: 'center',
   },
+  riskIndicator: {
+    top:0,
+    padding: 10,
+    width: '100%',
+    borderRadius: 10,
+    marginVertical: 10,
+    alignItems: 'center',
+    // borderWidth: 2,
+    // borderColor: 'white',
+  },
+  riskText: {
+    color: 'white',
+    fontWeight: 'bold',
+    fontSize: 20,
+  },
+  userIcon: {
+    color: 'white',
+    width: 100,
+    height: 100,
+  },
+
 });
