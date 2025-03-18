@@ -121,6 +121,7 @@ export default function AlertCycle() {
       { object_class: 'bus', x: -100, y: 100, mDA: 20, risk: true},
       { object_class: 'truck', x: 0, y: 0, mDA: 30, risk: false },
       { object_class: 'cyclist', x: 100, y: 0, mDA: 30, risk: false },
+      { object_class: 'motor', x: -100 ,y: 300, mDA: 30, risk: false },
     ];
     setCoordinates(hardcodedData);
     setLoading(false);
@@ -150,6 +151,7 @@ export default function AlertCycle() {
 
       {/* ======= Cars Coordinates ====== */} 
       <View style={styles.CoordinatesViewPort}>
+  
       </View>
       {/* ====================== */} 
     </View>
