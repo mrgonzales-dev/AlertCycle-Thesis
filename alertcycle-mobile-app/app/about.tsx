@@ -39,3 +39,18 @@ const styles = StyleSheet.create({
     textDecorationLine: 'underline',
   },
 });
+
+// turn this into a file named "dashboard"
+// Make the background white
+// Add features like 
+//      - Button to connect to alertcycle wifi (this dont have to do anything, just a button)
+//      - Basic Manual to what to do
+//      - A title of our program
+//      - add a feature for the developer to go from the index.tsx to this dashboard so that we can see it on development
+//
+//
+//      TITLE 
+//
+//
+//      CONNECT TO ALERT CYCLE DEVICE (BUTTON)
+//      DESCRIPTON TO WHAT TO DO
