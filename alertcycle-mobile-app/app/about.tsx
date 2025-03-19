@@ -17,7 +17,7 @@ export default function About() {
         </View>
       </View>
         <TouchableOpacity style={styles.connect_btn}  onPress={()=> alert('Connecting to AlertCycle Device')}>
-          <Text>Connect to AlertCycle Device</Text>
+          <Text style={styles.text_btn}>Connect to AlertCycle Device</Text>
           </TouchableOpacity>
       </View>
 
@@ -35,7 +35,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 24,
     fontWeight: 'bold',
-    marginBottom: 10,
+    marginBottom: 300,
   },/*
   description: {
     fontSize: 16,
@@ -48,24 +48,30 @@ const styles = StyleSheet.create({
     textDecorationLine: 'underline',
   },*/
   shape_container:{
-    height:150,
+    height:100,
     alignItems: 'center',
     justifyContent: 'center',
-    margin:250,  
+    margin:150,  
   },
   circle:{
-    width:360,
-    height:360,
-    borderRadius:360/2,
-    borderColor: 'armygreen',
-    borderWidth: 5,
+    width:300,
+    height:300,
+    borderRadius:300/2,
+    borderColor: 'green',
+    borderWidth: 3,
   },
   connect_btn:{
-    backgroundColor: 'oceanblue',
+    backgroundColor: '#039dfc',
     paddingVertical:12,
     paddingHorizontal:20,
     borderRadius:8,
-  },/*
+  },
+  text_btn:{
+    fontWeight: 'bold',
+    color: 'white',
+    fontSize: 18,
+    textAlign: 'center',
+  }/*
   rectangle:{
     width:120*2,
     height:120,
