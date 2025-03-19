@@ -32,8 +32,8 @@ const Radar = ({ coordinates }) => {
         <Defs>
           {/* Gradient from Green to Red */}
           <LinearGradient id="radarGradient" x1="0" y1="0" x2="0" y2={heightOfRadar} gradientUnits="userSpaceOnUse">
-            <Stop offset="0%" stopColor="green" />
-            <Stop offset="100%" stopColor="red" />
+            <Stop offset="0%" stopColor="red" />
+            <Stop offset="100%" stopColor="green" />
           </LinearGradient>
 
           <ClipPath id="radarClip">
@@ -121,7 +121,7 @@ export default function AlertCycle() {
       { object_class: 'bus', x: -100, y: 100, mDA: 20, risk: true},
       { object_class: 'truck', x: 0, y: 0, mDA: 30, risk: false },
       { object_class: 'cyclist', x: 100, y: 0, mDA: 30, risk: false },
-      { object_class: 'motor', x: -100 ,y: 300, mDA: 30, risk: false },
+      { object_class: 'motor', x: -300,y: 300, mDA: 30, risk: false },
     ];
     setCoordinates(hardcodedData);
     setLoading(false);
@@ -141,7 +141,7 @@ export default function AlertCycle() {
           </Text>
         </Animated.View>
       </View>
-      {/* ====================== */} 
+      {/* ============================ */} 
 
   
       {/* ======= Radar Component====== */} 
@@ -161,7 +161,7 @@ export default function AlertCycle() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: 'black',
+    backgroundColor: '#1a1a1a',
     alignItems: 'center',
     width: "100%",
     height: "100%",
@@ -170,7 +170,7 @@ const styles = StyleSheet.create({
   },
   RiskViewPort: {
     flex: 1,
-    backgroundColor: 'black',
+    backgroundColor: '#1a1a1a',
     alignItems: 'center',
     width: "100%",
     height: "10%",
