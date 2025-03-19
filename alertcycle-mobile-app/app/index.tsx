@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { View, Text, StyleSheet, Animated, ActivityIndicator, Button} from 'react-native';
+import { View, Text, StyleSheet, Animated, ActivityIndicator, Button, TouchableOpacity, Alert} from 'react-native';
 import Svg, { Circle, ClipPath, Defs, Path, Image, Line, LinearGradient, Stop} from 'react-native-svg';
 import {useNavigation} from '@react-navigation/native';
 
@@ -142,7 +142,10 @@ export default function AlertCycle() {
             {overallRisk ? 'HIGH RISK!' : 'SAFE'}
           </Text>
         </Animated.View>
-        <Button style={styles.button_dashboard} title = "Dahsboard" onPress={() => navigation.navigate('about')}/>
+        <TouchableOpacity style={styles.button_dashboard}  onPress={() => Alert.alert('Alert','Opening Dashboard', 
+          [{text: 'OK', onPress:()=> navigation.navigate('about')},])}>
+          <Text>Dashboard</Text>
+        </TouchableOpacity>
       </View>
       {/* ====================== */} 
 

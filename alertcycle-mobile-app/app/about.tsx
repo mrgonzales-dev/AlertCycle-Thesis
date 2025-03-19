@@ -1,5 +1,5 @@
 import React from 'react';
-import {StyleSheet, Text, View, Button } from 'react-native';
+import {StyleSheet, Text, View, TouchableOpacity } from 'react-native';
 import { Link } from 'expo-router';
 
 export default function About() {
@@ -13,9 +13,12 @@ export default function About() {
       </ThemedText>
       <Link href="/" style={styles.link}>Go Back to Home</Link>*/}
       <View style={styles.shape_container}>
-        <View style={styles.circle}></View>
+        <View style={styles.circle}>
+        </View>
       </View>
-        <Button style={styles.connect_btn} title="Connect" onPress={()=> {}} color="red"/>
+        <TouchableOpacity style={styles.connect_btn}  onPress={()=> alert('Connecting to AlertCycle Device')}>
+          <Text>Connect to AlertCycle Device</Text>
+          </TouchableOpacity>
       </View>
 
   );
@@ -58,7 +61,10 @@ const styles = StyleSheet.create({
     borderWidth: 5,
   },
   connect_btn:{
-    fontSize: 35,
+    backgroundColor: 'oceanblue',
+    paddingVertical:12,
+    paddingHorizontal:20,
+    borderRadius:8,
   },/*
   rectangle:{
     width:120*2,
