@@ -17,6 +17,7 @@ const VehicleIcon = (VehiclesIcon) => {
   return icons[VehiclesIcon.toLowerCase()] || require('../assets/icons/user.png');
 };
 
+
 const Radar = ({ coordinates }) => {
 
   const heightOfRadar = 30;
