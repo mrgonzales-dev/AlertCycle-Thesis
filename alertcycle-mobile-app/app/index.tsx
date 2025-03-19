@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { View, Text, StyleSheet, Animated, ActivityIndicator} from 'react-native';
+import { View, Text, StyleSheet, Animated, ActivityIndicator, Button} from 'react-native';
 import Svg, { Circle, ClipPath, Defs, Path, Image, Line, LinearGradient, Stop} from 'react-native-svg';
+import {useNavigation} from '@react-navigation/native';
 
 const VehicleIcon = (VehiclesIcon) => {
   const icons = {
@@ -95,6 +96,7 @@ export default function AlertCycle() {
   const [loading, setLoading] = useState(true);
   const [overallRisk, setOverallRisk] = useState(false);
   const scaleAnim = useRef(new Animated.Value(1)).current;
+  const navigation = useNavigation();
 
   useEffect(() => {
     const hasHighRisk = coordinates.some(item => item.risk);
@@ -140,6 +142,7 @@ export default function AlertCycle() {
             {overallRisk ? 'HIGH RISK!' : 'SAFE'}
           </Text>
         </Animated.View>
+        <Button style={styles.button_dashboard} title = "Dahsboard" onPress={() => navigation.navigate('about')}/>
       </View>
       {/* ====================== */} 
 
@@ -206,6 +209,12 @@ const styles = StyleSheet.create({
     color: 'white',
     width: 100,
     height: 100,
+  },
+  button_dashboard: {
+    backgroundColor: 'blue',
+    padding: 10,
+    borderRadius: 5,
+    margin: 10,
   },
 
 });

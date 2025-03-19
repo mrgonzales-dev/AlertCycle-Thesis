@@ -1,18 +1,23 @@
 import React from 'react';
-import {View, StyleSheet } from 'react-native';
-import { ThemedText } from '@/components/ThemedText';
-import { ThemedView } from '@/components/ThemedView';
+import {StyleSheet, Text, View, Button } from 'react-native';
 import { Link } from 'expo-router';
 
 export default function About() {
   return (
-    <ThemedView style={styles.container}>
-      <ThemedText style={styles.title}>About Page</ThemedText>
-      <ThemedText style={styles.description}>
-        Welcome to the About page! Here you can learn more about our application.
+
+
+      <View style={styles.container}>      
+      <Text style={styles.title}>DASHBOARD</Text>
+      {/*<ThemedText style={styles.description}>
+        Welcome to the Dashboard page! Here you need to connect the Phone to the Alertcycle device.
       </ThemedText>
-      <Link href="/" style={styles.link}>Go Back to Home</Link>
-    </ThemedView>
+      <Link href="/" style={styles.link}>Go Back to Home</Link>*/}
+      <View style={styles.shape_container}>
+        <View style={styles.circle}></View>
+      </View>
+        <Button style={styles.connect_btn} title="Connect" onPress={()=> {}} color="red"/>
+      </View>
+
   );
 }
 
@@ -22,22 +27,44 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     padding: 20,
+    backgroundColor: 'white', 
   },
   title: {
     fontSize: 24,
     fontWeight: 'bold',
     marginBottom: 10,
-  },
+  },/*
   description: {
     fontSize: 16,
     textAlign: 'center',
     marginBottom: 20,
   },
-  link: {
+  link:{
     fontSize: 18,
     color: '#007aff',
     textDecorationLine: 'underline',
+  },*/
+  shape_container:{
+    height:150,
+    alignItems: 'center',
+    justifyContent: 'center',
+    margin:250,  
   },
+  circle:{
+    width:360,
+    height:360,
+    borderRadius:360/2,
+    borderColor: 'armygreen',
+    borderWidth: 5,
+  },
+  connect_btn:{
+    fontSize: 35,
+  },/*
+  rectangle:{
+    width:120*2,
+    height:120,
+    backgroundColor: 'red', 
+  },*/
 });
 
 // turn this into a file named "dashboard"
