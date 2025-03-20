@@ -1,8 +1,9 @@
 import React from 'react';
-import {StyleSheet, Text, View, TouchableOpacity } from 'react-native';
-import { Link } from 'expo-router';
+import {StyleSheet, Text, View, TouchableOpacity, Alert } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 
 export default function About() {
+  const navigation = useNavigation();
   return (
 
 
@@ -16,13 +17,14 @@ export default function About() {
         <View style={styles.circle}>
         </View>
       </View>
-        <TouchableOpacity style={styles.connect_btn}  onPress={()=> alert('Connecting to AlertCycle Device')}>
+        <TouchableOpacity style={styles.connect_btn}  onPress={()=> Alert.alert('alert', 'Connecting to AlertCycle Device',
+          [{text: 'OK', onPress:()=> navigation.navigate('scan')},])}>
           <Text style={styles.text_btn}>Connect to AlertCycle Device</Text>
           </TouchableOpacity>
       </View>
 
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {

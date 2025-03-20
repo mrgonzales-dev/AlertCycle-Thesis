@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { View, Text, StyleSheet, Animated, ActivityIndicator, Button, TouchableOpacity, Alert} from 'react-native';
+import { View, Text, StyleSheet, Animated, TouchableOpacity, Alert} from 'react-native';
 import Svg, { Circle, ClipPath, Defs, Path, Image, Line, LinearGradient, Stop} from 'react-native-svg';
 import {useNavigation} from '@react-navigation/native';
 
