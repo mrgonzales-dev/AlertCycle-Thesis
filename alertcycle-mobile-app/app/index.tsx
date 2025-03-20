@@ -17,6 +17,46 @@ const VehicleIcon = (VehiclesIcon) => {
   return icons[VehiclesIcon.toLowerCase()] || require('../assets/icons/user.png');
 };
 
+// const FetchData = (coordinates) => {
+//   var points = []; 
+//   fetch("/api/data")
+//     .then((response) => response.json())
+//     .then((data) => {
+//
+//       // const coordinatesDiv = document.getElementById("coordinates");
+//       // coordinatesDiv.innerHTML = ""; // Clear previous data
+//
+//       if (data.length === 0) {
+//         // coordinatesDivinnerHTML = "<p>No objects detected.</p>";
+//         console.log(`Log: No Objects Found, ${data}`)
+//         return;
+//       }
+//
+//       points = []; 
+//       
+//       data.forEach((obj) => {
+//         
+//         const { object_class, x, y, mDA, risk } = obj;
+//         points.push({ object_class, x, y, mDA, risk }); // Store points
+//         console.log("Object: " + object_class);
+//         const coordText = `Class: ${object_class} | (x: ${x}, y: ${y}) | Depth Avg: ${mDA} | Risk: ${risk ? "High" : "Low"}`;
+//  
+//         console.log(`Coordinates Got from the fetch: ${coordText}`)
+//
+//         //==================================================
+//         // const coordElement = document.createElement("div");
+//         // coordElement.classList.add("coordinate");
+//         // if (risk) coordElement.classList.add("high-risk");
+//         // if (!risk) coordElement.classList.add("low-risk");
+//         // coordElement.textContent = coordText;
+//         // coordinatesDiv.appendChild(coordElement);
+//         //==================================================
+//      
+//       });
+//     })
+//     .catch((error) => console.error("Error fetching data:", error));
+//     return points;
+// }
 
 const Radar = ({ coordinates }) => {
 
@@ -91,11 +131,58 @@ const Radar = ({ coordinates }) => {
   );
 };
 
+// =============== DEVICE IP ADDRESS ===============//
+const AC_IP = 'http://localhost:3000/api/data'; //
+// =================================================//
+
+
+// ===== FETCH DATA FROM SERVER ==========
+
+const fetchDataFromServer = async ()  => {
+    try {
+      const response = await fetch(AC_IP);
+      if (!response.ok) {
+        throw new Error('Failed to fetch data');
+      }
+      const data = await response.json(); 
+      return data;
+    } catch (err) {
+        throw err;
+    }
+};
+// =======================================
+
 export default function AlertCycle() {
   const [coordinates, setCoordinates] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [result, setData] = useState([]);
   const [overallRisk, setOverallRisk] = useState(false);
   const scaleAnim = useRef(new Animated.Value(1)).current;
+ 
+
+  //======= FETCHING DATA PROCESS =================
+  useEffect(() => {
+
+    const getData = async () => {
+      try {
+        setLoading(true);                   // Start loading spinner or indicator
+        const result = await fetchDataFromServer();  // Fetch the data from the server
+        console.log(result);
+        setData(result);                    // Set the fetched data into state
+        setError(null);                     // Reset any error states if successful
+      } catch (err) {
+        setError('Error fetching data');    // Set error message if fetching fails
+      } finally {
+        setLoading(false);                  // Stop loading spinner or indicator
+      }
+    };
+
+    getData(); // Fetch data immediately on component mount
+    const interval = setInterval(getData, 250); 
+    return () => clearInterval(interval); 
+  }, []); 
+  //===============================================
 
   useEffect(() => {
     const hasHighRisk = coordinates.some(item => item.risk);
@@ -130,7 +217,20 @@ export default function AlertCycle() {
 
   return (
     <View style={styles.container}>
-     
+      {/* ===== Coordinate View Port ====== */} 
+      <View style={styles.CoordinatesViewPort}>
+        {result.length > 0 ? (
+            result.map((result, index) => (
+              <Text key={index} style={styles.coordinateText}>
+                Object: {result.object_class}, X: {result.x}, Y: {result.mda}
+              </Text>
+            ))
+          ) : (
+              <Text> No coordinates available </Text>
+        )}
+      </View>
+      {/* ================================ */} 
+      
       {/* ===== Animated Risk Indicator ====== */} 
       <View style={styles.RiskViewPort}>
         <Animated.View style={[styles.riskIndicator, { 
@@ -142,7 +242,7 @@ export default function AlertCycle() {
           </Text>
         </Animated.View>
       </View>
-      {/* ============================ */} 
+      {/* =================================== */} 
 
   
       {/* ======= Radar Component====== */} 
@@ -159,6 +259,8 @@ export default function AlertCycle() {
   );
 }
 
+
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -168,6 +270,14 @@ const styles = StyleSheet.create({
     height: "100%",
     // borderWidth: 2,
     // borderColor: 'white',
+  },
+  CoordinatesViewPort: {
+    padding: 10,
+  },
+  coordinateText: {
+    fontSize: 14,
+    color: 'black',
+    marginBottom: 5,
   },
   RiskViewPort: {
     flex: 1,
