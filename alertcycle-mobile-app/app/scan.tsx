@@ -12,7 +12,7 @@ export default function Scanning() {
     if(!permission.granted){
         return(
             <View style={styles.containers}>
-                <Text>Camera Permission Required</Text>
+                <Text style = {styles.message}>Camera Permission Required</Text>
                 <TouchableOpacity onPress={requestPermission}>
                     <Text>Request Permission</Text>
                 </TouchableOpacity>
@@ -20,7 +20,7 @@ export default function Scanning() {
         );
     }
     function toggleCameraFacing(){
-        setFacing(current => (current === 'front' ? 'back' : 'back'));
+        setFacing(current => (current === 'back' ? 'front' : 'back'));
     }
 
     return (
@@ -40,9 +40,6 @@ const styles = StyleSheet.create({
     containers: {
         flex: 1,
         justifyContent: 'center',
-        alignItems: 'center',
-        padding: 20,
-        backgroundColor: 'white',
     },
     message: {
         textAlign: 'center',
