@@ -1,9 +1,14 @@
 import React from 'react';
-import {Image, StyleSheet, Text, View, TouchableOpacity, Alert} from 'react-native';
+
+import {SafeAreaView, Pressable, Image, StyleSheet, Text, View, TouchableOpacity, Alert} from 'react-native';
+
 import { useNavigation } from '@react-navigation/native';
 
+
 const blue_main_logo  = require("../assets/main-logo/ac-logo-black.png");
+
 const bike_transparent = require("../assets/ui-components/bicycle-transparent.png");
+
 
 export default function Dashboard() {
   const navigation = useNavigation();
@@ -14,12 +19,13 @@ export default function Dashboard() {
 
       {/* Foreground Content */}
       <Image source={blue_main_logo} style={styles.image} />
-   <TouchableOpacity 
+      <TouchableOpacity 
           style={styles.connect_btn}
           onPress={() => navigation.navigate('Qrscanner')}>
-          <Text style={styles.buttonText}>Connect</Text>
-        </TouchableOpacity>
-
+          <Text style={styles.buttonText}>
+            Connect
+          </Text>
+      </TouchableOpacity>
     </View>
   );
 };

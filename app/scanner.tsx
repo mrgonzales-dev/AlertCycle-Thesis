@@ -13,7 +13,7 @@ const VehicleIcon = (VehiclesIcon) => {
     pedicab: require('../assets/icons/pedicab.png'),
     tricycle: require('../assets/icons/tricycle.png'),
     truck: require('../assets/icons/truck.png'),
-  };
+ };
   return icons[VehiclesIcon.toLowerCase()] || require('../assets/icons/user.png');
 };
 

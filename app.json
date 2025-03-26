@@ -15,7 +15,12 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/main-logo/ac-logo-blue.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "permissions": [
+        "android.permission.CAMERA",
+        "android.permission.RECORD_AUDIO"
+      ],
+      "package": "com.mrg2400.alertcycle"
     },
     "web": {
       "bundler": "metro",
@@ -25,17 +30,34 @@
     "plugins": [
       "expo-router",
       [
+        "expo-camera",
+        {
+          "cameraPermission": "allow $(PRODUCT_NAME) to access your camera",
+          "microphonePermission": "allow $(PRODUCT_NAME) to access your microphone",
+          "recordAudioAndroid": true
+        }
+      ],
+      [
         "expo-splash-screen",
         {
           "image": "./assets/main-logo/ac-logo-blue.png",
           "imageWidth": 200,
           "resizeMode": "contain",
-          "backgroundColor": "#00000"
+          "backgroundColor": "#000000"
         }
       ]
     ],
     "experiments": {
       "typedRoutes": true
-    }
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "594aa60f-4b4a-4e28-906d-0a6913cadc2e"
+      }
+    },
+    "owner": "mrg2400"
   }
 }
