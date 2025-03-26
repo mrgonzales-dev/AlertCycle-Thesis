@@ -17,47 +17,6 @@ const VehicleIcon = (VehiclesIcon) => {
   return icons[VehiclesIcon.toLowerCase()] || require('../assets/icons/user.png');
 };
 
-// const FetchData = (coordinates) => {
-//   var points = []; 
-//   fetch("/api/data")
-//     .then((response) => response.json())
-//     .then((data) => {
-//
-//       // const coordinatesDiv = document.getElementById("coordinates");
-//       // coordinatesDiv.innerHTML = ""; // Clear previous data
-//
-//       if (data.length === 0) {
-//         // coordinatesDivinnerHTML = "<p>No objects detected.</p>";
-//         console.log(`Log: No Objects Found, ${data}`)
-//         return;
-//       }
-//
-//       points = []; 
-//       
-//       data.forEach((obj) => {
-//         
-//         const { object_class, x, y, mDA, risk } = obj;
-//         points.push({ object_class, x, y, mDA, risk }); // Store points
-//         console.log("Object: " + object_class);
-//         const coordText = `Class: ${object_class} | (x: ${x}, y: ${y}) | Depth Avg: ${mDA} | Risk: ${risk ? "High" : "Low"}`;
-//  
-//         console.log(`Coordinates Got from the fetch: ${coordText}`)
-//
-//         //==================================================
-//         // const coordElement = document.createElement("div");
-//         // coordElement.classList.add("coordinate");
-//         // if (risk) coordElement.classList.add("high-risk");
-//         // if (!risk) coordElement.classList.add("low-risk");
-//         // coordElement.textContent = coordText;
-//         // coordinatesDiv.appendChild(coordElement);
-//         //==================================================
-//      
-//       });
-//     })
-//     .catch((error) => console.error("Error fetching data:", error));
-//     return points;
-// }
-
 const Radar = ({ coordinates }) => {
 
   const heightOfRadar = 30;
@@ -163,7 +122,6 @@ export default function AlertCycle() {
 
   //======= FETCHING DATA PROCESS =================
   useEffect(() => {
-
     const getData = async () => {
       try {
         setLoading(true);                   // Start loading spinner or indicator
@@ -222,7 +180,7 @@ export default function AlertCycle() {
         {result.length > 0 ? (
             result.map((result, index) => (
               <Text key={index} style={styles.coordinateText}>
-                Object: {result.object_class}, X: {result.x}, Y: {result.mda}
+                Object: {result.object_class}, X: {result.x}, Y: {result.mDA}
               </Text>
             ))
           ) : (
@@ -244,11 +202,9 @@ export default function AlertCycle() {
       </View>
       {/* =================================== */} 
 
-  
       {/* ======= Radar Component====== */} 
       <Radar coordinates={coordinates}/>
       {/* ====================== */} 
-  
 
       {/* ======= Cars Coordinates ====== */} 
       <View style={styles.CoordinatesViewPort}>
@@ -259,8 +215,6 @@ export default function AlertCycle() {
   );
 }
 
-
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -268,8 +222,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     width: "100%",
     height: "100%",
-    // borderWidth: 2,
-    // borderColor: 'white',
   },
   CoordinatesViewPort: {
     padding: 10,
