@@ -10,7 +10,7 @@ const blue_main_logo  = require("../assets/main-logo/ac-logo-black.png");
 const bike_transparent = require("../assets/ui-components/bicycle-transparent.png");
 
 
-export default function Dashboard() {
+export default function AlertCycle() {
   const navigation = useNavigation();
   return (
     <View style={styles.container}>
@@ -21,7 +21,7 @@ export default function Dashboard() {
       <Image source={blue_main_logo} style={styles.image} />
       <TouchableOpacity 
           style={styles.connect_btn}
-          onPress={() => navigation.navigate('Qrscanner')}>
+          onPress={() => navigation.navigate('bridge')}>
           <Text style={styles.buttonText}>
             Connect
           </Text>
@@ -39,7 +39,7 @@ const styles = StyleSheet.create({
   },
   backgroundImage: {
     position: 'absolute', // Positioning the background behind other elements
-    top: 200,
+    top: 180,
     left: -290,
     width: '200%',
     height: '100%',
@@ -50,6 +50,7 @@ const styles = StyleSheet.create({
     height: 200,
     resizeMode: 'contain',
     marginBottom: 300,
+    bottom: 70,
   },
   connect_btn: {
     bottom: 0,

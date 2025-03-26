@@ -8,7 +8,8 @@ import { useCameraPermissions } from "expo-camera";
 import { Camera, CameraView } from "expo-camera";
 
 
-export default function Qrscanner() {
+
+export default function ConnectionPage() {
   const navigation = useNavigation();
   
   const [permission, requestPermission] = useCameraPermissions();
@@ -16,10 +17,9 @@ export default function Qrscanner() {
   const isPermissionGranted = Boolean(permission?.granted);
   
   return (
-   <SafeAreaView style={styles.container}>
-      <Stack.Screen options={{ title: "Overview", headerShown: false }} />
+   <View style={styles.container}>
       <Text style={styles.title}>QR Code Scanner</Text>
-      <View style={{ gap: 20 }}>
+      <View style={{ gap: 10 }}>
         <TouchableOpacity onPress={requestPermission}>
           <Text style={styles.buttonStyle}>Request Permissions</Text>
         </TouchableOpacity>
@@ -36,7 +36,7 @@ export default function Qrscanner() {
           </TouchableOpacity>
         </Link>
       </View>
-    </SafeAreaView>
+    </View>
   );
 };
 
@@ -44,12 +44,11 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: "center",
-    backgroundColor: "black",
-    justifyContent: "space-around",
-    paddingVertical: 80,
+    justifyContent: "center",
+    backgroundColor: "white",
   },
   title: {
-    color: "white",
+    color: "black",
     fontSize: 40,
   },
   buttonStyle: {
