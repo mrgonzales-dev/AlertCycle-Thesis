@@ -1,26 +1,26 @@
 import React from 'react';
-import {Image, StyleSheet, Text, View, TouchableOpacity, Alert } from 'react-native';
+import {Image, StyleSheet, Text, View, TouchableOpacity, Alert} from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 
-
-const blue_main_logo  = require("../assets/main-logo/ac-logo-blue.png")
-
+const blue_main_logo  = require("../assets/main-logo/ac-logo-black.png");
+const bike_transparent = require("../assets/ui-components/bicycle-transparent.png");
 
 export default function Dashboard() {
   const navigation = useNavigation();
   return (
-      <View style={styles.container}>      
-        {/* Local Image */}
-        <Image source={blue_main_logo} style={styles.image} />
-       <TouchableOpacity 
-        style={styles.connect_btn}  
-        onPress={()=> Alert.alert('alert', 'Connecting to AlertCycle Device',
-        [{text: 'OK', onPress:()=> navigation.navigate('scan')},])}> 
-        <Text style={styles.buttonText}> 
-             Connect
-        </Text> 
+    <View style={styles.container}>
+      {/* Background Image */}
+      <Image source={bike_transparent} style={styles.backgroundImage} />
+
+      {/* Foreground Content */}
+      <Image source={blue_main_logo} style={styles.image} />
+   <TouchableOpacity 
+          style={styles.connect_btn}
+          onPress={() => navigation.navigate('Qrscanner')}>
+          <Text style={styles.buttonText}>Connect</Text>
         </TouchableOpacity>
-      </View>
+
+    </View>
   );
 };
 
@@ -31,10 +31,18 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: 20,
   },
+  backgroundImage: {
+    position: 'absolute', // Positioning the background behind other elements
+    top: 200,
+    left: -290,
+    width: '200%',
+    height: '100%',
+    resizeMode: 'stretch', // Ensures the image covers the full area without distorting
+  },
   image: {
     width: 300,
     height: 200,
-    resizeMode: 'contain', // or 'contain', 'stretch', etc.
+    resizeMode: 'contain',
     marginBottom: 300,
   },
   connect_btn: {
@@ -44,7 +52,15 @@ const styles = StyleSheet.create({
     width: '80%',
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'green',
+    backgroundColor: '#29be00',
+    shadowColor: '#a7ff22',
+    shadowOffset: {
+      width: 0,
+      height: 6,
+    },
+    shadowOpacity: 0.39,
+    shadowRadius: 8.30,
+    elevation: 13,
   },
   buttonText: {
     fontSize: 20,

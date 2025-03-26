@@ -54,6 +54,8 @@ export default function RootLayout() {
               iconName = 'home';
             } else if (route.name === 'Scanner') {
               iconName = 'information-circle';
+            } else if (route.name === 'Qrscanner') {
+              iconName = 'information-circle';
             } 
             // Return an icon for the tab
             return <Ionicons name={iconName} size={size} color={color} />;
@@ -62,10 +64,12 @@ export default function RootLayout() {
           tabBarInactiveTintColor: 'gray',
         })}
       >
-        {/* 'index' Screen */}
+        {/* 'landing page' Screen */}
         <Tab.Screen name="Dashboard" component={HomeScreen} options={{ headerShown: false }} />
-        {/* 'about' Screen */}
+        {/* 'ai scanner' Screen */}
         <Tab.Screen name="Scanner" component={ScannerScreen} options={{ headerShown: false }}/>
+        {/* 'qr scanner' Screen */}
+        <Tab.Screen name="Qrscanner" component={QrscannerScreen} options={{ headerShown: false }}/>
       </Tab.Navigator>
    <StatusBar
         style="auto"
@@ -92,4 +96,14 @@ function ScannerScreen() {
     </Stack>
   );
 }
+
+function QrscannerScreen() {
+  return (
+    <Stack>
+      <Stack.Screen name="qrscanner" options={{ title: 'Qrscanner', headerShown: false}} />
+    </Stack>
+  );
+}
+
+
 
