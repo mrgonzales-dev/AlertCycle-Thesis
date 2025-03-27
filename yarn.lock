@@ -4425,6 +4425,11 @@ expo-modules-core@2.2.2:
   dependencies:
     invariant "^2.2.4"
 
+expo-network@^7.0.5:
+  version "7.0.5"
+  resolved "https://registry.npmjs.org/expo-network/-/expo-network-7.0.5.tgz"
+  integrity sha512-5dlowKAimhIDN1/lBRnN6SSH6c07f12R3QrfLf3b3GEr6D+EijH2wE537mmwPh1p+254LAkm0Z5ZEXxbwII4sA==
+
 expo-router@^4.0.17:
   version "4.0.17"
   resolved "https://registry.npmjs.org/expo-router/-/expo-router-4.0.17.tgz"

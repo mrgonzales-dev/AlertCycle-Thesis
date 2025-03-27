@@ -4,7 +4,7 @@
     "slug": "alertcycle",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/main-logo/ac-logo-black.png",
+    "icon": "./assets/main-logo/ac-adaptive-icon.png",
     "scheme": "light",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
@@ -13,12 +13,17 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/main-logo/ac-logo-blue.png",
-        "backgroundColor": "#ffffff"
+        "foregroundImage": "./assets/main-logo/ac-adaptive-icon.png",
+        "backgroundColor": "#000000"
       },
       "permissions": [
         "android.permission.CAMERA",
-        "android.permission.RECORD_AUDIO"
+        "android.permission.RECORD_AUDIO",
+        "android.permission.ACCESS_FINE_LOCATION",
+        "android.permission.ACCESS_WIFI_STATE",
+        "android.permission.CHANGE_WIFI_STATE",
+        "android.permission.ACCESS_NETWORK_STATE",
+        "android.permission.INTERNET",
       ],
       "package": "com.mrg2400.alertcycle"
     },
@@ -28,12 +33,6 @@
       "favicon": "./assets/images/favicon.png"
     },
     "plugins": [
-    [
-      "react-native-wifi-reborn",
-      {
-        "fineLocationPermission": false
-      }
-    ],
       "expo-router",
       [
         "expo-camera",
@@ -46,10 +45,11 @@
       [
         "expo-splash-screen",
         {
-          "image": "./assets/main-logo/ac-logo-blue.png",
-          "imageWidth": 200,
-          "resizeMode": "contain",
-          "backgroundColor": "#000000"
+            "image": "./assets/main-logo/ac-logo-black.png",
+            "imageWidth": 200,
+            "padding": 40,   
+            "resizeMode": "contain",
+            "backgroundColor": "#ffffff"
         }
       ]
     ],
