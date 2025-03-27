@@ -15,7 +15,7 @@ import {
 
 import React from 'react';
 import { useEffect, useRef } from "react";
-import WifiManager from "react-native-wifi-reborn";
+import {WifiManager } from "react-native-wifi-reborn";
 import { useNavigation } from '@react-navigation/native';
 import { PermissionsAndroid } from 'react-native';
 
@@ -45,16 +45,19 @@ export default function ActivateCamera() {
   }, []);
 
 
-  const connectToWifi = (ssid, password, encryptionType, hidden) => {
-    // Connect to the Wi-Fi network
-    WifiManager.connectToProtectedSSID(ssid, password, encryptionType === 'WPA', hidden)
+const connectToWifi = (ssid, password, encryptionType, hidden) => {
+  if (WifiManager) {
+    WifiManager.connectToProtectedSSID(ssid, password, false, hidden)
       .then(() => {
         Alert.alert("Connected to Wi-Fi", `You are now connected to ${ssid}`);
       })
       .catch((error) => {
         Alert.alert("Connection Failed", `Failed to connect to ${ssid}: ${error.message}`);
       });
-  };
+  } else {
+    Alert.alert("Error", "WifiManager is not available.");
+  }
+};
 
 const handleQRCodeScanned = async (data) => {
   if (data && !qrLock.current) {
