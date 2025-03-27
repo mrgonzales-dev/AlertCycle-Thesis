@@ -19,9 +19,7 @@ export default function ConnectionPage() {
         <Image source={sample_qr_code} style={styles.sampe_qr} />
         <Text style={styles.pr_b}></Text>
       </View>
-      {/* Bottom Container */}
       <View style={styles.bottomContainer}>
-      {/* Top Container */}
         <View style={styles.headerContainer}>
           <Text style={styles.title}>Connect To Device</Text>
           <Text style={styles.pr}>
@@ -37,27 +35,19 @@ export default function ConnectionPage() {
           <Link href={"./qrscan"} asChild>
             <TouchableOpacity 
               onPress={requestPermission}
-              disabled={!isPermissionGranted}
               style={styles.scan_btn}
             >
-              <Text style={[
-                styles.buttonText, 
-                { opacity: !isPermissionGranted ? 0.5 : 1 }
-              ]}>
+              <Text style={styles.buttonText}>
                 Scan QR Code
               </Text>
             </TouchableOpacity>
           </Link>
 
             <TouchableOpacity 
-              disabled={!isPermissionGranted}
               style={styles.skip_btn}
               style={styles.connect_btn}
               onPress={() => navigation.navigate('scanner')}>
-              <Text style={[
-                styles.skip_btn_txt, 
-                { opacity: !isPermissionGranted ? 0.5 : 1 }
-              ]}>
+              <Text style={styles.skip_btn_txt}>
                Already Connected?
               </Text>
             </TouchableOpacity>
@@ -133,11 +123,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#FDFDFD',
-    shadowColor: '#a7ff22',
-    shadowOffset: { width: 0, height: 6 },
-    shadowOpacity: 0.39,
-    shadowRadius: 8.30,
-    elevation: 13,
+    marginBottom: 20,
   },
   skip_btn: {
     color: "white",

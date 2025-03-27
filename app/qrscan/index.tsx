@@ -15,7 +15,7 @@ import {
 
 import React from 'react';
 import { useEffect, useRef } from "react";
-import {WifiManager } from "react-native-wifi-reborn";
+import { WifiManager } from "react-native-wifi-reborn";
 import { useNavigation } from '@react-navigation/native';
 import { PermissionsAndroid } from 'react-native';
 
