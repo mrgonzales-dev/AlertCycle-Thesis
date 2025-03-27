@@ -33,6 +33,9 @@
       "favicon": "./assets/images/favicon.png"
     },
     "plugins": [
+      [
+      "react-native-wifi-reborn"
+      ],
       "expo-router",
       [
         "expo-camera",

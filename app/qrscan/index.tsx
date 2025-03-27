@@ -1,11 +1,24 @@
 import { CameraView, CameraType, useCameraPermissions } from 'expo-camera';
 import { Stack } from "expo-router";
-import { Image, View, AppState, Linking, Platform, SafeAreaView, StatusBar, StyleSheet, Dimensions, Alert } from "react-native";
-import React, { useEffect, useRef } from "react";
-import { WifiManager } from "react-native-wifi-reborn";
+import {
+  Image,
+  View,
+  AppState,
+  Linking,
+  Platform,
+  SafeAreaView,
+  StatusBar,
+  StyleSheet,
+  Dimensions,
+  Alert,
+} from "react-native";
+
+import React from 'react';
+import { useEffect, useRef } from "react";
+import WifiManager  from "react-native-wifi-reborn";
 import { useNavigation } from '@react-navigation/native';
 import { PermissionsAndroid } from 'react-native';
-import * as Network from 'expo-network'; // Import expo-network
+
 
 const { width, height } = Dimensions.get('window');
 const innerDimension = 300;
@@ -31,70 +44,64 @@ export default function ActivateCamera() {
     };
   }, []);
 
-  // Add function to check the current network state
-  const getNetworkInfo = async () => {
-    const networkState = await Network.getNetworkStateAsync();
-    const currentSSID = networkState.isConnected ? networkState.ssid : null;
-    console.log(`Connected to network SSID: ${currentSSID}`);
-  };
 
-  const connectToWifi = (ssid, password, encryptionType, hidden) => {
+const connectToWifi = (ssid, password, encryptionType, hidden, timeout) => {
+    console.log("Checking for wifi manager....")
     if (WifiManager) {
-      WifiManager.connectToProtectedSSID(ssid, password, false, hidden)
-        .then(() => {
-          Alert.alert("Connected to Wi-Fi", `You are now connected to ${ssid}`);
-          getNetworkInfo(); // Get network information after connecting
-        })
-        .catch((error) => {
-          Alert.alert("Connection Failed", `Failed to connect to ${ssid}: ${error.message}`);
-        });
-    } else {
-      Alert.alert("Error", "WifiManager is not available.");
-    }
-  };
+    WifiManager.connectToProtectedSSID(ssid, password, false, false)
+      .then(() => {
+        Alert.alert("Connected to Wi-Fi", `You are now connected to ${ssid}`);
+      })
+      .catch((error) => {
+        Alert.alert("Connection Failed", `Failed to connect to ${ssid}: ${error.message}`);
+      });
+  } else {
+    Alert.alert("Error", "WifiManager is not available.");
+  }
+};
 
-  const handleQRCodeScanned = async (data) => {
-    if (data && !qrLock.current) {
-      qrLock.current = true;
+const handleQRCodeScanned = async (data) => {
+  if (data && !qrLock.current) {
+    qrLock.current = true;
 
-      // Request location permissions
-      const granted = await PermissionsAndroid.request(
-        PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
-        {
-          title: 'Location permission is required for WiFi connections',
-          message:
-            'This app needs location permission as this is required ' +
-            'to scan for wifi networks.',
-          buttonNegative: 'DENY',
-          buttonPositive: 'ALLOW',
-        }
-      );
+    // Request location permissions
+    const granted = await PermissionsAndroid.request(
+      PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+      {
+        title: 'Location permission is required for WiFi connections',
+        message:
+          'This app needs location permission as this is required ' +
+          'to scan for wifi networks.',
+        buttonNegative: 'DENY',
+        buttonPositive: 'ALLOW',
+      }
+    );
 
-      // Check if permission was granted
-      if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-        // Assuming your QR code data is in the form ["SSID", "Password"]
-        const match = data;
-        console.log(match);
-        if (match) {
-          const ssid = match[1];
-          const password = match[2];
-          const hidden = false
-          const encryptionType = "WPA";
-          
-          // Connect to Wi-Fi after 1 second delay
-          setTimeout(() => {
-            connectToWifi(ssid, password, encryptionType, hidden);
-          }, 1000);
-        } else {
-          Alert.alert("Invalid QR Code", "Scanned QR code does not contain valid Wi-Fi credentials.");
-          qrLock.current = false; // Allow scanning again
-        }
+    // Check if permission was granted
+    if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+      // Assuming your QR code data is in the form ["SSID", "Password"]
+      const match = data.split(" "); // Split by space
+      console.log(match);
+      if (match) {
+        const ssid = match[0];
+        const password = match[1];
+        const hidden = false;
+        const encryptionType = false;
+        const timeout = 20;
+        console.log(`Match - ssid: ${ssid} pass: ${password}`)
+        // Connect to Wi-Fi after 1 second delay
+        console.log("Connecting....")
+        connectToWifi(ssid, password, encryptionType, hidden, timeout);
       } else {
-        Alert.alert("Permission Denied", "Location permission is required to connect to Wi-Fi.");
+        Alert.alert("Invalid QR Code", "Scanned QR code does not contain valid Wi-Fi credentials.");
         qrLock.current = false; // Allow scanning again
       }
+    } else {
+      Alert.alert("Permission Denied", "Location permission is required to connect to Wi-Fi.");
+      qrLock.current = false; // Allow scanning again
     }
-  };
+  }
+};
 
   return (
     <SafeAreaView style={StyleSheet.absoluteFillObject}>
