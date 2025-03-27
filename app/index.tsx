@@ -23,7 +23,7 @@ export default function AlertCycle() {
           style={styles.connect_btn}
           onPress={() => navigation.navigate('bridge')}>
           <Text style={styles.buttonText}>
-            Connect
+            Start
           </Text>
       </TouchableOpacity>
     </View>
@@ -40,8 +40,8 @@ const styles = StyleSheet.create({
   backgroundImage: {
     position: 'absolute', // Positioning the background behind other elements
     top: 180,
-    left: -290,
-    width: '200%',
+    left: -350,
+    width: '240%',
     height: '100%',
     resizeMode: 'stretch', // Ensures the image covers the full area without distorting
   },
@@ -59,17 +59,10 @@ const styles = StyleSheet.create({
     width: '80%',
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#29be00',
-    shadowColor: '#a7ff22',
-    shadowOffset: {
-      width: 0,
-      height: 6,
-    },
-    shadowOpacity: 0.39,
-    shadowRadius: 8.30,
-    elevation: 13,
+    backgroundColor: "#1373EC",
   },
   buttonText: {
+    fontWeight: "bold",
     fontSize: 20,
     color: 'white',
   },

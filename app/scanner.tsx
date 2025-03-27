@@ -36,6 +36,11 @@ const Radar = ({ coordinates }) => {
             <Stop offset="100%" stopColor="green" />
           </LinearGradient>
 
+          <LinearGradient id="radarGradientOutline" x1="0" y1="0" x2="0" y2={heightOfRadar} gradientUnits="userSpaceOnUse">
+            <Stop offset="0%" stopColor="green" />
+            <Stop offset="100%" stopColor="red" />
+          </LinearGradient>
+
           <ClipPath id="radarClip">
             <Path d={`M 0 0 L -10 5 L -10 ${heightOfRadar} H 10 V 5 Z `} />
           </ClipPath>
@@ -56,7 +61,7 @@ const Radar = ({ coordinates }) => {
               y1="0"
               x2={Math.cos(angle) * 28}
               y2={Math.sin(angle) * 28}
-              stroke="green"
+              stroke="url(#radarGradientOutline)"
               strokeWidth="0.1"
               clipPath="url(#radarClip)"
             />
@@ -218,7 +223,7 @@ export default function AlertCycle() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#1a1a1a',
+    backgroundColor: 'white',
     alignItems: 'center',
     width: "100%",
     height: "100%",
