@@ -17,6 +17,8 @@ import React from 'react';
 import { useEffect, useRef } from "react";
 import WifiManager from "react-native-wifi-reborn";
 import { useNavigation } from '@react-navigation/native';
+import { PermissionsAndroid } from 'react-native';
+
 
 const { width, height } = Dimensions.get('window');
 const innerDimension = 300;
@@ -42,6 +44,7 @@ export default function ActivateCamera() {
     };
   }, []);
 
+
   const connectToWifi = (ssid, password, encryptionType, hidden) => {
     // Connect to the Wi-Fi network
     WifiManager.connectToProtectedSSID(ssid, password, encryptionType === 'WPA', hidden)
@@ -53,27 +56,48 @@ export default function ActivateCamera() {
       });
   };
 
-  const handleQRCodeScanned = (data) => {
-    if (data && !qrLock.current) {
-      qrLock.current = true;
+const handleQRCodeScanned = async (data) => {
+  if (data && !qrLock.current) {
+    qrLock.current = true;
 
-      // Example QR code format: wifi:s:yourssid;t:wpa;p:yourpassword;h:false;;
-      const match = data.match(/WIFI:S:(.*?);T:(.*?);P:(.*?);H:(.*?);;/i);
+    // Request location permissions
+    const granted = await PermissionsAndroid.request(
+      PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+      {
+        title: 'Location permission is required for WiFi connections',
+        message:
+          'This app needs location permission as this is required ' +
+          'to scan for wifi networks.',
+        buttonNegative: 'DENY',
+        buttonPositive: 'ALLOW',
+      }
+    );
+
+    // Check if permission was granted
+    if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+      // Assuming your QR code data is in the form ["SSID", "Password"]
+      const match = data;
+      console.log(match);
       if (match) {
         const ssid = match[1];
-        const encryptionType = match[2]; // usually "WPA" or "WEP"
-        const password = match[3];
-        const hidden = match[4] === "true"; // hidden status, true if "H:true"
-
+        const password = match[2];
+        const hidden = false
+        const encryptionType = "WPA";
+        
+        // Connect to Wi-Fi after 1 second delay
         setTimeout(() => {
           connectToWifi(ssid, password, encryptionType, hidden);
         }, 1000);
       } else {
-        Alert.alert("Invalid QR Code","Scanned QR code does not contain valid Wi-Fi credentials.");
-        qrLock.current = false;  // Allow scanning again
+        Alert.alert("Invalid QR Code", "Scanned QR code does not contain valid Wi-Fi credentials.");
+        qrLock.current = false; // Allow scanning again
       }
+    } else {
+      Alert.alert("Permission Denied", "Location permission is required to connect to Wi-Fi.");
+      qrLock.current = false; // Allow scanning again
     }
-  };
+  }
+};
 
   return (
     <SafeAreaView style={StyleSheet.absoluteFillObject}>
