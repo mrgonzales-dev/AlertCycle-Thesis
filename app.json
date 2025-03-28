@@ -24,6 +24,7 @@
         "android.permission.CHANGE_WIFI_STATE",
         "android.permission.ACCESS_NETWORK_STATE",
         "android.permission.INTERNET",
+        "android.permission.MODIFY_AUDIO_SETTINGS",
       ],
       "package": "com.mrg2400.alertcycle"
     },
