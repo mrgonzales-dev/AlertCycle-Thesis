@@ -50,6 +50,8 @@ const Radar = ({ coordinates }) => {
       <Svg
         style={StyleSheet.radarBackground}
         viewBox="-10 0 20 20"
+         width="350"
+        height="700"
         preserveAspectRatio="xMidYMid meet"
       >
         <Defs>
