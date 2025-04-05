@@ -4,11 +4,8 @@ import {SafeAreaView, Pressable, Image, StyleSheet, Text, View, TouchableOpacity
 
 import { useNavigation } from '@react-navigation/native';
 
-
 const blue_main_logo  = require("../assets/main-logo/ac-logo-black.png");
-
 const bike_transparent = require("../assets/ui-components/bicycle-transparent.png");
-
 
 export default function AlertCycle() {
   const navigation = useNavigation();
@@ -38,12 +35,12 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   backgroundImage: {
-    position: 'absolute', // Positioning the background behind other elements
+    position: 'absolute',
     top: 180,
     left: -350,
     width: '240%',
     height: '100%',
-    resizeMode: 'stretch', // Ensures the image covers the full area without distorting
+    resizeMode: 'stretch',
   },
   image: {
     width: 300,
