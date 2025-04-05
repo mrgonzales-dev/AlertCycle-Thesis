@@ -106,12 +106,6 @@ const Radar = ({ coordinates }) => {
           })}
         </G>
 
-      </Svg>
-      <Svg
-    style={styles.overlayLayer}
-    viewBox="-10 0 20 20"
-    preserveAspectRatio="xMidYMid meet"
-  > 
       {/* === User Icon === */}
         <Image
           href={userIcon}
@@ -416,29 +410,27 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   radarContainer: {
-    border: '1px white solid',
     position: 'relative',
     height: 700,
     width: "100%",
     position: 'relative',
     overflow: 'hidden',
+    margin: '10',
+    padding: '10',
+    top: 0,
+    left: 0,
+    right: 0,
+    left: 0,
   },
   radarBackground: {
     position: 'absolute',
     top: 0,
     left: 0,
-    width: '100%',
-    height: '100%',
-    zIndex: 0,
-    overflow: 'hidden',
-  },
-  overlayLayer: {
-    position: 'absolute',
-    top: 0,
+    right: 0,
     left: 0,
     width: '100%',
     height: '100%',
-    zIndex: 1,
+    zIndex: 0,
     overflow: 'hidden',
   },
   spawn: {
