@@ -33,107 +33,102 @@ const getVehicleSize = (vehicleType) => {
 const heightOfRadar = 30;
 const userIcon = require("../assets/icons/user.png");
 
-// Memoized static radar background component.
-// Because it has no dynamic props, it will only render once.
-const RadarBackground = memo(() => (
-  <Svg
-    style={StyleSheet.absoluteFill}
-    viewBox="-10 0 20 20"
-    preserveAspectRatio="xMidYMid meet"
-  >
-    <Defs>
-      <LinearGradient id="radarGradient" x1="0" y1="0" x2="0" y2={heightOfRadar} gradientUnits="userSpaceOnUse">
-        <Stop offset="20%" stopColor="red" stopOpacity="0.3" />
-        <Stop offset="40%" stopColor="yellow" stopOpacity="0.3" />
-        <Stop offset="70%" stopColor="green" stopOpacity="0.3" />
-      </LinearGradient>
-      <LinearGradient id="radarGradientOutline" x1="0" y1="0" x2="0" y2={heightOfRadar} gradientUnits="userSpaceOnUse">
-        <Stop offset="0%" stopColor="red" />
-        <Stop offset="100%" stopColor="green" />
-      </LinearGradient>
-      <ClipPath id="radarClip">
-        <Path d={`M 0 0 L -10 5 L -10 ${heightOfRadar} H 10 V 5 Z`} />
-      </ClipPath>
-    </Defs>
-    <Path
-      id="mainradar"
-      d={`M 0 0 L -10 5 L -10 ${heightOfRadar} H 10 V 5 Z`}
-      fill="url(#radarGradient)"
-      strokeWidth="0.2"
-    />
-    <G clipPath="url(#radarClip)">
-      {[3, 6, 9, 12, 15, 18, 21, 23, 26, 28].map((radius, index) => (
-        <Circle
-          key={index}
-          cx="0"
-          cy="0"
-          r={radius}
-          stroke="url(#radarGradientOutline)"
-          strokeWidth="0.1"
-          fill="none"
-        />
-      ))}
-      {[...Array(20)].map((_, i) => {
-        const angle = (i * 10 * Math.PI) / 180;
-        return (
-          <Line
-            key={i}
-            x1="0"
-            y1="0"
-            x2={Math.cos(angle) * 28}
-            y2={Math.sin(angle) * 28}
-            stroke="url(#radarGradientOutline)"
-            strokeWidth="0.1"
-          />
-        );
-      })}
-    </G>
-    <Image
-      href={userIcon}
-      x="-4"
-      y="-6"
-      width="8"
-      height="8"
-      preserveAspectRatio="xMidYMid slice"
-    />
-  </Svg>
-));
-
-
-
 // Main Radar component that overlays the vehicle icons on top of the static background
 const Radar = ({ coordinates }) => {
-  // Normalize function: adjust the coordinate to match the SVG viewBox.
-const normalizeYpos = (value) => {
-  // Clamp y between 0 and 350 (original mapped range)
-  const clampedY = Math.max(0, Math.min(value, 350));
-  return (clampedY / 350) * 20;
-};
-const normalizeXpos = (value) => {
-  // Clamp x between 0 and 600 (original data range)
-  const clampedX = Math.max(0, Math.min(value, 600));
-  return ((clampedX - 300) / 300) * 10;
-};
+  const normalizeYpos = (value) => {
+    const clampedY = Math.max(0, Math.min(value, 350));
+    return (clampedY / 700) * 30;
+  };
+
+  const normalizeXpos = (value) => {
+    const clampedX = Math.max(0, Math.min(value, 600));
+    return ((clampedX - 300) / 300) * 10;
+  };
+
   return (
     <View style={styles.radarContainer}>
-      {/* Render static background */}
-      <RadarBackground/>
-      {/* Render dynamic vehicle icons */}
       <Svg
-        style={StyleSheet.absoluteFill}
+        style={StyleSheet.radarBackground}
         viewBox="-10 0 20 20"
         preserveAspectRatio="xMidYMid meet"
       >
         <Defs>
+          <LinearGradient id="radarGradient" x1="0" y1="0" x2="0" y2={heightOfRadar} gradientUnits="userSpaceOnUse">
+            <Stop offset="20%" stopColor="red" stopOpacity="0.3" />
+            <Stop offset="40%" stopColor="yellow" stopOpacity="0.3" />
+            <Stop offset="70%" stopColor="green" stopOpacity="0.3" />
+          </LinearGradient>
+          <LinearGradient id="radarGradientOutline" x1="0" y1="0" x2="0" y2={heightOfRadar} gradientUnits="userSpaceOnUse">
+            <Stop offset="0%" stopColor="red" />
+            <Stop offset="100%" stopColor="green" />
+          </LinearGradient>
+          <ClipPath id="radarClip">
+            <Path d={`M 0 0 L -10 5 L -10 ${heightOfRadar} H 10 V 5 Z`} />
+          </ClipPath>
           <ClipPath id="vehicleClip">
             <Path d={`M 0 0 L -10 5 L -10 ${heightOfRadar} H 10 V 5 Z`} />
           </ClipPath>
         </Defs>
+
+        {/* === Background Base === */}
+        <Path
+          d={`M 0 0 L -10 5 L -10 ${heightOfRadar} H 10 V 5 Z`}
+          fill="url(#radarGradient)"
+          strokeWidth="0.2"
+        />
+
+        {/* === Background Rings and Lines === */}
+        <G clipPath="url(#radarClip)">
+          {[3, 6, 9, 12, 15, 18, 21, 23, 26, 28].map((radius, index) => (
+            <Circle
+              key={index}
+              cx="0"
+              cy="0"
+              r={radius}
+              stroke="url(#radarGradientOutline)"
+              strokeWidth="0.1"
+              fill="none"
+            />
+          ))}
+          {[...Array(20)].map((_, i) => {
+            const angle = (i * 10 * Math.PI) / 180;
+            return (
+              <Line
+                key={i}
+                x1="0"
+                y1="0"
+                x2={Math.cos(angle) * 28}
+                y2={Math.sin(angle) * 28}
+                stroke="url(#radarGradientOutline)"
+                strokeWidth="0.1"
+              />
+            );
+          })}
+        </G>
+
+      </Svg>
+      <Svg
+    style={styles.overlayLayer}
+    viewBox="-10 0 20 20"
+    preserveAspectRatio="xMidYMid meet"
+  > 
+      {/* === User Icon === */}
+        <Image
+          href={userIcon}
+          x="-4"
+          y="-6"
+          width="8"
+          height="8"
+          preserveAspectRatio="xMidYMid slice"
+        />
+
+        {/* === Vehicle Icons (Dynamic) === */}
+        <G clipPath="url(#vehicleClip)">
           {coordinates.map((vehicle, index) => {
             const vehicleSize = getVehicleSize(vehicle.object_class);
             return (
               <Image
-                clipPath="url(#vehicleClip)"
+                style={styles.spawn}
                 key={index}
                 href={VehicleIcon(vehicle.object_class)}
                 x={normalizeXpos(vehicle.x) - vehicleSize.width / 2}
@@ -143,6 +138,7 @@ const normalizeXpos = (value) => {
               />
             );
           })}
+        </G>
       </Svg>
     </View>
   );
@@ -208,24 +204,6 @@ export default function AlertCycle() {
 
 
 // Map average depth to the appropriate y coordinate on the radar (y range: 0 to 550)
-
-
-  // if (mAD >= 150) {
-  //   // High risk: map mAD [150, maxHighMAD] to y [0, 129]
-  //   const maxHighMAD = 150; // adjust based on expected range
-  //   const clampedMAD = Math.min(mAD, maxHighMAD);
-  //   return ((clampedMAD - 150) / (maxHighMAD - 150)) * 129;
-  // } else if (mAD >= 140 && mAD < 150) {
-  //   // Hazardous: map mAD [140, 150] to y [130, 250]
-  //   return ((mAD - 140) / 10) * (250 - 130) + 130;
-  // } else if (mAD >= 130 && mAD < 140) {
-  //   // Safe: map mAD [130, 140] to y [250, 350] (now clamped so icons don't get too far)
-  //   return ((mAD - 130) / 10) * (350 - 250) + 250;
-  // } else {
-  //   // For mAD values below 130, default to the farthest safe position within the new limit.
-  //   return 200;
-  // }
-
 const MIN_MDA = 85;
 const MAX_MDA = 180;
 
@@ -259,8 +237,6 @@ useEffect(() => {
         mDA: item.mDA,
         hazard_level: item.hazard_level,
       }));
-      
-      
       setData(validData);
       setCoordinates(formattedCoordinates);
       setError(null);
@@ -323,7 +299,6 @@ useEffect(() => {
 
       return nearestVehicle;
     };
-
 
   // Animation for risk indicator
   useEffect(() => {
@@ -441,12 +416,35 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   radarContainer: {
-    top: 0,
-    bottom: 0,
+    border: '1px white solid',
+    position: 'relative',
     height: 700,
     width: "100%",
-    alignItems: 'center',
-    justifyContent: 'center',
+    position: 'relative',
+    overflow: 'hidden',
+  },
+  radarBackground: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    width: '100%',
+    height: '100%',
+    zIndex: 0,
+    overflow: 'hidden',
+  },
+  overlayLayer: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    width: '100%',
+    height: '100%',
+    zIndex: 1,
+    overflow: 'hidden',
+  },
+  spawn: {
+    position: 'absolute',
+    zIndex: 2,
+    overflow: 'hidden',
   },
   riskIndicator: {
     top:0,
