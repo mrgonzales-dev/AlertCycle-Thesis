@@ -30,120 +30,7 @@ const getVehicleSize = (vehicleType) => {
   return sizes[vehicleType.toLowerCase()] || { width: 10, height: 10 }; // Default size if vehicle type isn't found
 };
 
-const heightOfRadar = 30;
-const userIcon = require("../assets/icons/user.png");
 
-// Main Radar component that overlays the vehicle icons on top of the static background
-const Radar = ({ coordinates }) => {
-  const normalizeYpos = (value) => {
-    const clampedY = Math.max(0, Math.min(value, 350));
-    return (clampedY / 700) * 30;
-  };
-
-  const normalizeXpos = (value) => {
-    const clampedX = Math.max(0, Math.min(value, 600));
-    return ((clampedX - 300) / 300) * 10;
-  };
-
-  return (
-    <View style={styles.radarContainer}>
-      <Svg
- 
-        style={styles.radarBackground}
-        viewBox="-10 0 20 20"
-         width="360"
-        height="100%"
-        preserveAspectRatio="xMidYMid meet"
-      >
-        <Defs>
-          <LinearGradient id="radarGradient" x1="0" y1="0" x2="0" y2={heightOfRadar} gradientUnits="userSpaceOnUse">
-            <Stop offset="20%" stopColor="red" stopOpacity="0.3" />
-            <Stop offset="40%" stopColor="yellow" stopOpacity="0.3" />
-            <Stop offset="70%" stopColor="green" stopOpacity="0.3" />
-          </LinearGradient>
-          <LinearGradient id="radarGradientOutline" x1="0" y1="0" x2="0" y2={heightOfRadar} gradientUnits="userSpaceOnUse">
-            <Stop offset="0%" stopColor="red" />
-            <Stop offset="100%" stopColor="green" />
-          </LinearGradient>
-          <ClipPath id="radarClip">
-            <Path d={`M 0 0 L -10 5 L -10 ${heightOfRadar} H 10 V 5 Z`} />
-          </ClipPath>
-          <ClipPath id="vehicleClip">
-            <Path d={`M 0 0 L -10 5 L -10 ${heightOfRadar} H 10 V 5 Z`} />
-          </ClipPath>
-        </Defs>
-
-        {/* === Background Base === */}
-        <Path
-          d={`M 0 0 L -10 5 L -10 ${heightOfRadar} H 10 V 5 Z`}
-          fill="url(#radarGradient)"
-          strokeWidth="0.2"
-        />
-
-        {/* === Background Rings and Lines === */}
-        <G clipPath="url(#radarClip)">
-          {[3, 6, 9, 12, 15, 18, 21, 23, 26, 28].map((radius, index) => (
-            <Circle
-              key={index}
-              cx="0"
-              cy="0"
-              r={radius}
-              stroke="url(#radarGradientOutline)"
-              strokeWidth="0.1"
-              fill="none"
-            />
-          ))}
-          {[...Array(20)].map((_, i) => {
-            const angle = (i * 10 * Math.PI) / 180;
-            return (
-              <Line
-                key={i}
-                x1="0"
-                y1="0"
-                x2={Math.cos(angle) * 28}
-                y2={Math.sin(angle) * 28}
-                stroke="url(#radarGradientOutline)"
-                strokeWidth="0.1"
-              />
-            );
-          })}
-        </G>
-
-
-        {/* === Vehicle Icons (Dynamic) === */}
-        <G clipPath="url(#vehicleClip)">
-          {coordinates.map((vehicle, index) => {
-            const vehicleSize = getVehicleSize(vehicle.object_class);
-            return (
-              <Image
-                style={styles.spawn}
-                key={index}
-                href={VehicleIcon(vehicle.object_class)}
-                x={normalizeXpos(vehicle.x) - vehicleSize.width / 2}
-                y={normalizeYpos(vehicle.y)}
-                width={vehicleSize.width}
-                height={vehicleSize.height}
-              />
-            );
-          })}
-        </G>
-
-      {/* === User Icon === */}
-        <Image
-          href={userIcon}
-          x="-4"
-          y="-6"
-          width="8"
-          height="8"
-          preserveAspectRatio="xMidYMid slice"
-        />
-      </Svg>
-    </View>
-  );
-};
-// // =============== device ip address ===============//
-// const AC_IP = 'http://10.0.0.34:3000/api/data';     //
-// // =================================================//
 
 // =============== device ip address ===============//
 const AC_IP = 'http://192.168.137.1:3000/api/data';     //
@@ -385,11 +272,14 @@ const styles = StyleSheet.create({
     height: "100%",
     position: 'relative',  
   },
+  absoluteFill: {
+    ...StyleSheet.absoluteFillObject, 
+  },
   road_background: {
-    position: "absolute", 
-    width: "100%",
-    height: "100%",
-    resizeMode: "stretch",
+    position: 'absolute', 
+    width: '100%',
+    height: '100%',
+    resizeMode: 'stretch',
     zIndex: -1,
   },
   CoordinatesViewPort: {
@@ -411,8 +301,10 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   radarContainer: {
-    height: "100%",
+    position: 'relative',
+    height: 700,
     width: "100%",
+    position: 'relative',
     overflow: 'hidden',
     top: 0,
     left: 0,
@@ -420,13 +312,18 @@ const styles = StyleSheet.create({
     left: 0,
   },
   radarBackground: {
+    position: 'absolute',
     top: 0,
     left: 0,
     right: 0,
     left: 0,
+    width: '100%',
+    height: '100%',
+    zIndex: 0,
     overflow: 'hidden',
   },
   spawn: {
+    position: 'absolute',
     zIndex: 2,
     overflow: 'hidden',
   },
@@ -442,6 +339,11 @@ const styles = StyleSheet.create({
     color: 'white',
     fontWeight: 'bold',
     fontSize: 20,
+  },
+  userIcon: {
+    color: 'white',
+    width: 100,
+    height: 100,
   },
 });
 
