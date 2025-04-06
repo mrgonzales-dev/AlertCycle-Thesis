@@ -36,7 +36,7 @@ const userIcon = require("../assets/icons/user.png");
 // Main Radar component that overlays the vehicle icons on top of the static background
 const Radar = ({ coordinates }) => {
   const normalizeYpos = (value) => {
-    const clampedY = Math.max(0, Math.min(value, 350));
+    const clampedY = Math.max(0, Math.min(value, 370));
     return (clampedY / 700) * 30;
   };
 
@@ -48,11 +48,10 @@ const Radar = ({ coordinates }) => {
   return (
     <View style={styles.radarContainer}>
       <Svg
- 
-        style={styles.radarBackground}
+      style={styles.radarContainer}
         viewBox="-10 0 20 20"
-         width="360"
-        height="100%"
+        width="360"
+        height="800"
         preserveAspectRatio="xMidYMid meet"
       >
         <Defs>
@@ -320,38 +319,24 @@ useEffect(() => {
   return (
     <View style={styles.container}>
 
-      <RNImage source={road_background} style={styles.road_background} />
+    <RNImage source={road_background} style={styles.road_background} />
  
-      {/* ===== Coordinate View Port ====== */} 
-      <View style={styles.CoordinatesViewPort}>
-        {result.length > 0 ? (
-            result.map((result, index) => (
-              <Text key={index} style={styles.coordinateText}>
-                Object: {result.object_class}, X: {result.x}, Y: {result.mDA}
-              </Text>
-            ))
-          ) : (
-              <Text> No coordinates available </Text>
-        )}
-      </View>
-      {/* ================================ */} 
-      
       {/* ===== Animated Risk Indicator ====== */} 
-      <View style={styles.RiskViewPort}>
- <Animated.View
-    style={[
-      styles.riskIndicator,
-      {
-        transform: [{ scale: scaleAnim }],
-        backgroundColor:
-          overallRisk === 'high'
-            ? 'rgba(255, 0, 0, 0.7)' // High Risk: Red
-            : overallRisk === 'hazardous'
-            ? 'rgba(255, 255, 0, 0.7)' // Hazardous: Yellow
-            : 'rgba(0, 255, 0, 0.3)', // Safe: Green
-      },
-    ]}
-  >
+    <View style={styles.RiskViewPort}>
+     <Animated.View
+        style={[
+          styles.riskIndicator,
+          {
+            transform: [{ scale: scaleAnim }],
+            backgroundColor:
+              overallRisk === 'high'
+                ? 'rgba(255, 0, 0, 0.7)' // High Risk: Red
+                : overallRisk === 'hazardous'
+                ? 'rgba(255, 255, 0, 0.7)' // Hazardous: Yellow
+                : 'rgba(0, 255, 0, 0.3)', // Safe: Green
+          },
+        ]}
+      >
     <Text style={styles.riskText}>
       {overallRisk === 'high'
         ? 'HIGH RISK DISTANCE!!'
@@ -394,6 +379,7 @@ const styles = StyleSheet.create({
   },
   CoordinatesViewPort: {
     padding: 10,
+    zIndex: 2,
   },
   coordinateText: {
     fontSize: 14,
@@ -411,24 +397,20 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   radarContainer: {
+    position: 'absolute', 
     height: "100%",
     width: "100%",
     overflow: 'hidden',
     top: 0,
     left: 0,
     right: 0,
-    left: 0,
-  },
-  radarBackground: {
-    top: 0,
-    left: 0,
-    right: 0,
-    left: 0,
-    overflow: 'hidden',
+    bottom: 0,
   },
   spawn: {
+    position: "relative",
     zIndex: 2,
     overflow: 'hidden',
+    border: "5px solid white",
   },
   riskIndicator: {
     top:0,
