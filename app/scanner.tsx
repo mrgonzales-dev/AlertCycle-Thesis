@@ -1,6 +1,7 @@
 import React, {memo, useState, useEffect, useRef } from 'react';
-import {Image as RNImage, View, Text, StyleSheet, Animated, ActivityIndicator} from 'react-native';
+import {Image as RNImage, View, Text, StyleSheet, Animated, TouchableOpacity, ActivityIndicator} from 'react-native';
 import Svg, { G, Circle, ClipPath, Defs, Path, Image, Line, LinearGradient, Stop} from 'react-native-svg';
+import { Ionicons } from '@expo/vector-icons';  // Import Ionicons from Expo
 
 /**
  * Returns the appropriate vehicle icon based on the vehicle type
@@ -228,6 +229,33 @@ export default function AlertCycle() {
 // })
 //--------------------------------------------
 
+
+const OverlayButton = () => {
+  const [isAlertOn, setIsAlertOn] = useState(true);
+
+  const handlePress = () => {
+    // Correct way to update state using the functional form of setIsAlertOn
+    setIsAlertOn(isAlertOn => !isALertOn);
+  };
+
+  return (
+    <View style={styles.overlayButtons}>
+      <View style={styles.speakerButton}>
+        <TouchableOpacity 
+            activeOpacity={0.5} 
+            onPress={handlePress}
+        >
+          <Ionicons
+            name={isAlertOn ? 'volume-high' : 'volume-mute'} 
+            size={50} 
+            color="white" 
+          />
+        </TouchableOpacity>
+      </View>
+    </View>
+  );
+};
+
 /**
  * Maps mean depth average (mDA) to Y coordinate on the radar display
  * @param {number} mda - The mean depth average value
@@ -361,6 +389,7 @@ useEffect(() => {
   return (
     <View style={styles.container}>
 
+
     <RNImage source={road_background} style={styles.road_background} />
  
       {/* ===== Animated Risk Indicator ====== */} 
@@ -379,19 +408,19 @@ useEffect(() => {
           },
         ]}
       >
-    <Text style={styles.riskText}>
-      {overallRisk === 'high'
-        ? 'HIGH RISK DISTANCE!!'
-        : overallRisk === 'hazardous'
-        ? 'HAZARDOUS DISTANCE'
-        : 'SAFE DISTANCE'}
-    </Text>
-    
-    {
       <Text style={styles.riskText}>
-        Vehicle: {nearestVehicle ? nearestVehicle.object_class.toUpperCase() : "NONE"}
-     </Text>
-    }
+        {overallRisk === 'high'
+          ? 'HIGH RISK DISTANCE!!'
+          : overallRisk === 'hazardous'
+          ? 'HAZARDOUS DISTANCE'
+          : 'SAFE DISTANCE'}
+      </Text>
+      
+      {
+        <Text style={styles.riskText}>
+          Vehicle: {nearestVehicle ? nearestVehicle.object_class.toUpperCase() : "NONE"}
+       </Text>
+      }
         </Animated.View>
       </View>
       {/* =================================== */} 
@@ -399,6 +428,11 @@ useEffect(() => {
       {/* ======= Radar Component====== */} 
       <Radar coordinates={coordinates}/>
       {/* ====================== */} 
+ 
+
+     {/*
+      <OverlayButton/>
+      */}
     </View>
   );
 }
@@ -411,6 +445,18 @@ const styles = StyleSheet.create({
     width: "100%",
     height: "100%",
     position: 'relative',  
+  },
+  overlayButtons: {
+    zIndex: 3,
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: "100%",
+    height: "100%",
+    position: "relative",
+  },
+  speakerButton: {
+    right: 10,
+    position: "absolute",
   },
   road_background: {
     position: "absolute", 
