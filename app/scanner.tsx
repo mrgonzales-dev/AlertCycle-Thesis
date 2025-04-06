@@ -2,6 +2,11 @@ import React, {memo, useState, useEffect, useRef } from 'react';
 import {Image as RNImage, View, Text, StyleSheet, Animated, ActivityIndicator} from 'react-native';
 import Svg, { G, Circle, ClipPath, Defs, Path, Image, Line, LinearGradient, Stop} from 'react-native-svg';
 
+/**
+ * Returns the appropriate vehicle icon based on the vehicle type
+ * @param {string} VehiclesIcon - The type of vehicle (e.g., 'bus', 'car', 'motor')
+ * @returns {ImageSource} - The corresponding image source for the vehicle icon
+ */
 const VehicleIcon = (VehiclesIcon) => {
   const icons = {
     bus: require('../assets/icons/bus.png'),
@@ -16,6 +21,11 @@ const VehicleIcon = (VehiclesIcon) => {
   return icons[VehiclesIcon.toLowerCase()] || require('../assets/icons/none.png');
 };
 
+/**
+ * Returns the display size for a given vehicle type
+ * @param {string} vehicleType - The type of vehicle (e.g., 'bus', 'car', 'motor')
+ * @returns {Object} - An object containing width and height properties
+ */
 const getVehicleSize = (vehicleType) => {
   const sizes = {
     motor: { width: 10, height: 10},
@@ -33,13 +43,27 @@ const getVehicleSize = (vehicleType) => {
 const heightOfRadar = 30;
 const userIcon = require("../assets/icons/user.png");
 
-// Main Radar component that overlays the vehicle icons on top of the static background
+/**
+ * Main Radar component that displays vehicle positions on a radar visualization
+ * @param {Object} props - Component props
+ * @param {Array} props.coordinates - Array of vehicle coordinate objects
+ */
 const Radar = ({ coordinates }) => {
+  /**
+   * Normalizes Y position to fit within radar bounds
+   * @param {number} value - Raw Y coordinate value
+   * @returns {number} - Normalized Y position
+   */
   const normalizeYpos = (value) => {
     const clampedY = Math.max(0, Math.min(value, 370));
     return (clampedY / 700) * 30;
   };
 
+  /**
+   * Normalizes X position to fit within radar bounds
+   * @param {number} value - Raw X coordinate value
+   * @returns {number} - Normalized X position
+   */
   const normalizeXpos = (value) => {
     const clampedX = Math.max(0, Math.min(value, 600));
     return ((clampedX - 300) / 300) * 10;
@@ -108,7 +132,6 @@ const Radar = ({ coordinates }) => {
           })}
         </G>
 
-
         {/* === Vehicle Icons (Dynamic) === */}
         <G clipPath="url(#vehicleClip)">
           {coordinates.map((vehicle, index) => {
@@ -161,6 +184,11 @@ const AC_IP = 'http://192.168.137.1:3000/api/data';     //
 // })
 //--------------------------------------------
 
+/**
+ * Fetches vehicle data from the server
+ * @returns {Promise<Array>} - Array of vehicle data objects
+ * @throws {Error} - When the fetch operation fails
+ */
 const fetchDataFromServer = async ()  => {
     try {
       const response = await fetch(AC_IP);
@@ -175,6 +203,9 @@ const fetchDataFromServer = async ()  => {
 };
 // =======================================
 
+/**
+ * Main AlertCycle component that manages the radar display and risk assessment
+ */
 export default function AlertCycle() {
   const [coordinates, setCoordinates] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -184,9 +215,7 @@ export default function AlertCycle() {
   const scaleAnim = useRef(new Animated.Value(1)).current;
   const [nearestVehicle, setNearestVehicle] = useState(null);
 
-
   const road_background = require("../assets/ui-components/road-background.jpg");
-
 
 //--------------------------------------------
 // detected_objects.append({
@@ -199,12 +228,14 @@ export default function AlertCycle() {
 // })
 //--------------------------------------------
 
-
-// Map average depth to the appropriate y coordinate on the radar (y range: 0 to 550)
-const MIN_MDA = 85;
-const MAX_MDA = 180;
-
+/**
+ * Maps mean depth average (mDA) to Y coordinate on the radar display
+ * @param {number} mda - The mean depth average value
+ * @returns {number} - The corresponding Y position on the radar
+ */
 function mapMDAToY(mda: number): number {
+  const MIN_MDA = 85;
+  const MAX_MDA = 180;
   const clampedMDA = Math.max(Math.min(mda, MAX_MDA), MIN_MDA); // Clamp to range
   return ((MAX_MDA - clampedMDA) / (MAX_MDA - MIN_MDA)) * 500;
 }
@@ -272,14 +303,25 @@ useEffect(() => {
       checkRiskAndNearestVehicle();
     }, [coordinates]);
 
-
-
-    // Function to calculate the distance between two points
+    /**
+     * Calculates the distance between two points
+     * @param {number} x1 - First point's X coordinate
+     * @param {number} y1 - First point's Y coordinate
+     * @param {number} x2 - Second point's X coordinate
+     * @param {number} y2 - Second point's Y coordinate
+     * @returns {number} - The calculated distance
+     */
     const calculateDistance = (x1, y1, x2, y2) => {
       return Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
     };
 
-    // Function to find the nearest vehicle
+    /**
+     * Finds the nearest vehicle to the user's position
+     * @param {Array} coordinates - Array of vehicle coordinates
+     * @param {number} userX - User's X position (default 0)
+     * @param {number} userY - User's Y position (default 0)
+     * @returns {Object|null} - The nearest vehicle object or null if no vehicles
+     */
     const findNearestVehicle = (coordinates, userX = 0, userY = 0) => {
       if (coordinates.length === 0) return null;
 
@@ -426,4 +468,3 @@ const styles = StyleSheet.create({
     fontSize: 20,
   },
 });
-
