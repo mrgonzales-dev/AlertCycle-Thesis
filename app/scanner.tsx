@@ -50,6 +50,18 @@ const userIcon = require("../assets/icons/user.png");
  * @param {Array} props.coordinates - Array of vehicle coordinate objects
  */
 const Radar = ({ coordinates }) => {
+ 
+
+  /**
+   * Normalizes X position to fit within radar bounds
+   * @param {number} value - Raw X coordinate value
+   * @returns {number} - Normalized X position
+   */
+  const normalizeXpos = (value) => {
+    const clampedX = Math.max(0, Math.min(value, 320));
+    return ((clampedX - 160) / 160) * 10;
+  };
+
   /**
    * Normalizes Y position to fit within radar bounds
    * @param {number} value - Raw Y coordinate value
@@ -60,15 +72,6 @@ const Radar = ({ coordinates }) => {
     return (clampedY / 700) * 30;
   };
 
-  /**
-   * Normalizes X position to fit within radar bounds
-   * @param {number} value - Raw X coordinate value
-   * @returns {number} - Normalized X position
-   */
-  const normalizeXpos = (value) => {
-    const clampedX = Math.max(0, Math.min(value, 600));
-    return ((clampedX - 300) / 300) * 10;
-  };
 
   return (
     <View style={styles.radarContainer}>
@@ -230,39 +233,13 @@ export default function AlertCycle() {
 //--------------------------------------------
 
 
-const OverlayButton = () => {
-  const [isAlertOn, setIsAlertOn] = useState(true);
-
-  const handlePress = () => {
-    // Correct way to update state using the functional form of setIsAlertOn
-    setIsAlertOn(isAlertOn => !isALertOn);
-  };
-
-  return (
-    <View style={styles.overlayButtons}>
-      <View style={styles.speakerButton}>
-        <TouchableOpacity 
-            activeOpacity={0.5} 
-            onPress={handlePress}
-        >
-          <Ionicons
-            name={isAlertOn ? 'volume-high' : 'volume-mute'} 
-            size={50} 
-            color="white" 
-          />
-        </TouchableOpacity>
-      </View>
-    </View>
-  );
-};
-
 /**
  * Maps mean depth average (mDA) to Y coordinate on the radar display
  * @param {number} mda - The mean depth average value
  * @returns {number} - The corresponding Y position on the radar
  */
 function mapMDAToY(mda: number): number {
-  const MIN_MDA = 85;
+  const MIN_MDA = 60;
   const MAX_MDA = 180;
   const clampedMDA = Math.max(Math.min(mda, MAX_MDA), MIN_MDA); // Clamp to range
   return ((MAX_MDA - clampedMDA) / (MAX_MDA - MIN_MDA)) * 500;
@@ -386,6 +363,13 @@ useEffect(() => {
   useEffect(() => {
   console.log(`Coordinates to plot:`, coordinates);
 }, [coordinates]);
+
+  const [isAlertOn, setIsAlertOn] = useState(false);
+  const handlePress = () => {
+    // Toggle the current state (true <-> false)
+    setIsAlertOn(previousState => !previousState);
+  };
+
   return (
     <View style={styles.container}>
 
@@ -418,21 +402,44 @@ useEffect(() => {
       
       {
         <Text style={styles.riskText}>
-          Vehicle: {nearestVehicle ? nearestVehicle.object_class.toUpperCase() : "NONE"}
+          Vehicle: {nearestVehicle ? "DETECTED" : "NONE"}
        </Text>
       }
         </Animated.View>
       </View>
-      {/* =================================== */} 
+      {/* =================================== */}  
 
       {/* ======= Radar Component====== */} 
       <Radar coordinates={coordinates}/>
       {/* ====================== */} 
- 
 
-     {/*
-      <OverlayButton/>
-      */}
+    <View style={styles.overlayButtons}>
+      <View style={styles.sideButton}>
+        <TouchableOpacity 
+            activeOpacity={0.5} 
+            onPress={handlePress}
+        >
+          <Ionicons
+            name={isAlertOn ? 'volume-high' : 'volume-mute'} 
+            size={35} 
+            color="white" 
+          />
+        </TouchableOpacity>
+      </View>
+
+      <View style={styles.sideButton}>
+        <TouchableOpacity 
+            activeOpacity={0.5} 
+            onPress={handlePress}
+        >
+          <Ionicons
+            name={'settings'} 
+            size={35} 
+            color="white" 
+          />
+        </TouchableOpacity>
+      </View>
+    </View>
     </View>
   );
 }
@@ -450,13 +457,19 @@ const styles = StyleSheet.create({
     zIndex: 3,
     justifyContent: 'center',
     alignItems: 'center',
-    width: "100%",
-    height: "100%",
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    width: 'fit',
+    borderRadius: 20,
+    height: 'fit',
+    left: 145,
+    bottom: 150,
+    margin: 10,
+    padding: 10,
     position: "relative",
   },
-  speakerButton: {
-    right: 10,
-    position: "absolute",
+  sideButton: {
+    margin: 10,
+    position: "relative",
   },
   road_background: {
     position: "absolute", 
