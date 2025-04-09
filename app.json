@@ -27,7 +27,6 @@
         "android.permission.MODIFY_AUDIO_SETTINGS"
       ],
       "package": "com.mrg2400.alertcycle",
-      // CleartextTraffic needs to be enabled under buildProperties for Expo EAS build
       "buildProperties": {
         "android": {
           "usesCleartextTraffic": true  
@@ -62,8 +61,8 @@
         "expo-splash-screen",
         {
           "image": "./assets/main-logo/ac-logo-black.png",
-          "imageWidth": 220,
-          "padding": 40,
+          "imageWidth": "90%",
+          "padding": 10,
           "backgroundColor": "#ffffff"
         }
       ]
