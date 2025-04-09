@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "alertcycle",
+    "name": "AlertCycle",
     "slug": "alertcycle",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -24,9 +24,15 @@
         "android.permission.CHANGE_WIFI_STATE",
         "android.permission.ACCESS_NETWORK_STATE",
         "android.permission.INTERNET",
-        "android.permission.MODIFY_AUDIO_SETTINGS",
+        "android.permission.MODIFY_AUDIO_SETTINGS"
       ],
-      "package": "com.mrg2400.alertcycle"
+      "package": "com.mrg2400.alertcycle",
+      // CleartextTraffic needs to be enabled under buildProperties for Expo EAS build
+      "buildProperties": {
+        "android": {
+          "usesCleartextTraffic": true  
+        }
+      }
     },
     "web": {
       "bundler": "metro",
@@ -35,8 +41,14 @@
     },
     "plugins": [
       [
-      "react-native-wifi-reborn"
+        "expo-build-properties",
+        {
+          "android": {
+            "usesCleartextTraffic": true
+          }
+        }
       ],
+      "react-native-wifi-reborn",
       "expo-router",
       [
         "expo-camera",
@@ -49,11 +61,10 @@
       [
         "expo-splash-screen",
         {
-            "image": "./assets/main-logo/ac-logo-black.png",
-            "imageWidth": 200,
-            "padding": 40,   
-            "resizeMode": "contain",
-            "backgroundColor": "#ffffff"
+          "image": "./assets/main-logo/ac-logo-black.png",
+          "imageWidth": 220,
+          "padding": 40,
+          "backgroundColor": "#ffffff"
         }
       ]
     ],

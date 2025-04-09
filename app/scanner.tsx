@@ -2,6 +2,11 @@ import React, {memo, useState, useEffect, useRef } from 'react';
 import {Image as RNImage, View, Text, StyleSheet, Animated, TouchableOpacity, ActivityIndicator} from 'react-native';
 import Svg, { G, Circle, ClipPath, Defs, Path, Image, Line, LinearGradient, Stop} from 'react-native-svg';
 import { Ionicons } from '@expo/vector-icons';  // Import Ionicons from Expo
+import { useNavigation } from '@react-navigation/native';
+import { Link } from "expo-router";
+import { Audio } from 'expo-av';
+
+
 
 /**
  * Returns the appropriate vehicle icon based on the vehicle type
@@ -12,7 +17,7 @@ const VehicleIcon = (VehiclesIcon) => {
   const icons = {
     bus: require('../assets/icons/bus.png'),
     car: require('../assets/icons/car.png'),
-    cyclist: require('../assets/icons/cylist.png'),
+    cyclist: require('../assets/icons/motor.png'),
     jeep: require('../assets/icons/jeep.png'),
     motor: require('../assets/icons/motor.png'),
     tricycle: require('../assets/icons/tricycle.png'),
@@ -29,10 +34,10 @@ const VehicleIcon = (VehiclesIcon) => {
  */
 const getVehicleSize = (vehicleType) => {
   const sizes = {
-    motor: { width: 10, height: 10},
+    motor: { width: 12, height: 12},
     bus: { width: 15, height: 15},
     car: { width: 10, height: 10},
-    cyclist: { width: 8, height: 8 },
+    cyclist: { width: 12, height: 12 },
     jeep: { width: 15, height: 15 },
     tricycle: { width: 10, height: 10},
     truck: { width: 20, height: 20},
@@ -167,12 +172,12 @@ const Radar = ({ coordinates }) => {
     </View>
   );
 };
-// // =============== device ip address ===============//
-// const AC_IP = 'http://10.0.0.34:3000/api/data';     //
-// // =================================================//
+// =============== device ip address ===============//
+const AC_IP = 'http://10.42.0.1:3000/api/data';     //
+// =================================================//
 
 // =============== device ip address ===============//
-const AC_IP = 'http://192.168.137.1:3000/api/data';     //
+// const AC_IP = 'http://192.168.137.1:3000/api/data';//
 // =================================================//
 
 // ===== FETCH DATA FROM SERVER ==========
@@ -211,6 +216,8 @@ const fetchDataFromServer = async ()  => {
  * Main AlertCycle component that manages the radar display and risk assessment
  */
 export default function AlertCycle() {
+
+  const navigation = useNavigation();
   const [coordinates, setCoordinates] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -220,6 +227,57 @@ export default function AlertCycle() {
   const [nearestVehicle, setNearestVehicle] = useState(null);
 
   const road_background = require("../assets/ui-components/road-background.jpg");
+
+
+
+  const [sound, setSound] = useState(null);
+
+  // Load the sound when component mounts
+  useEffect(() => {
+    return () => {
+      // Unload the sound when component unmounts
+      if (sound) {
+        sound.unloadAsync();
+      }
+    };
+  }, [sound]);
+
+
+  // Play sound when risk is high or hazardous
+  useEffect(() => {
+    const playWarningSound = async () => {
+      if (overallRisk === 'high' || overallRisk === 'hazardous') {
+        await playSound();
+      }
+    };
+
+    playWarningSound();
+  }, [overallRisk]);
+
+  const playSound = async () => {
+    try {
+      // Don't play if muted
+      if (!isAlertOn) return;
+      // Create and load the sound
+      const { sound: soundObject } = await Audio.Sound.createAsync(
+        require('../assets/beep/risky_beep.mp3'), // Change this to your sound file path
+        { shouldPlay: false } // Don't play immediately
+      );
+      
+      setSound(soundObject);
+      
+      // Play the sound
+      await soundObject.playAsync();
+      
+    } catch (error) {
+      console.error('Error playing sound:', error);
+    }
+  };
+
+
+
+
+
 
 //--------------------------------------------
 // detected_objects.append({
@@ -364,11 +422,13 @@ useEffect(() => {
   console.log(`Coordinates to plot:`, coordinates);
 }, [coordinates]);
 
-  const [isAlertOn, setIsAlertOn] = useState(false);
+  const [isAlertOn, setIsAlertOn] = useState(true);
+
   const handlePress = () => {
     // Toggle the current state (true <-> false)
     setIsAlertOn(previousState => !previousState);
   };
+
 
   return (
     <View style={styles.container}>
@@ -428,9 +488,10 @@ useEffect(() => {
       </View>
 
       <View style={styles.sideButton}>
-        <TouchableOpacity 
+ 
+        <Link href={"./video_feed"} asChild>
+          <TouchableOpacity 
             activeOpacity={0.5} 
-            onPress={handlePress}
         >
           <Ionicons
             name={'settings'} 
@@ -438,6 +499,7 @@ useEffect(() => {
             color="white" 
           />
         </TouchableOpacity>
+          </Link>
       </View>
     </View>
     </View>
@@ -462,7 +524,7 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     height: 'fit',
     left: 145,
-    bottom: 150,
+    bottom: 180,
     margin: 10,
     padding: 10,
     position: "relative",
