@@ -5,6 +5,6 @@
   "minify": false,
   "urlRandomness": null,
   "https": false,
-  "scheme": "exp+alertcycle",
+  "scheme": "com.mrg2400.alertcycle",
   "devClient": false
 }

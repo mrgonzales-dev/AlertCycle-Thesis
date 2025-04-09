@@ -61,8 +61,7 @@
         "expo-splash-screen",
         {
           "image": "./assets/main-logo/ac-logo-black.png",
-          "imageWidth": "90%",
-          "padding": 10,
+          "imageWidth": 50,
           "backgroundColor": "#ffffff"
         }
       ]
