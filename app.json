@@ -60,8 +60,8 @@
       [
         "expo-splash-screen",
         {
-          "image": "./assets/main-logo/ac-logo-black.png",
-          "imageWidth": 50,
+          "image": "./assets/main-logo/splash-icon.png",
+          "imageWidth": 150,
           "backgroundColor": "#ffffff"
         }
       ]
