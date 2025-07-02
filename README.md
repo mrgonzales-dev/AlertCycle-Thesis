@@ -36,8 +36,7 @@ This system is a **low-cost AI-powered alert system** designed for cyclists to d
 - Passive buzzer for alerts
 - Wi-Fi hotspot for mobile pairing
 
-📷 **Insert Hardware Build Image Here:**
-> ![Hardware Setup](images/hardware-setup.jpg)
+> ![Hardware Setup](./assets-for-readme/model.png)
 
 ---
 
@@ -48,8 +47,7 @@ A custom Android app displays:
 - Real-time camera feed 📷
 - Distance estimations 📏
 
-📷 **Insert Mobile UI Screenshot Here:**
-> ![Mobile App](images/mobile-ui.jpg)
+> ![Mobile App](./assets-for-readme/mobile.png)
 
 ---
 
@@ -75,8 +73,7 @@ A custom Android app displays:
 4. If distance ≤ 3m, alerts are triggered.
 5. App displays warnings and audio feedback.
 
-📷 **Insert System Flow Diagram Here:**
-> ![System Flow](images/system-diagram.jpg)
+> ![System Flow](./assets-for-readme/flow.jpg)
 
 ---
 
@@ -91,8 +88,7 @@ A custom Android app displays:
 | Usability  | 4.76 / 5  |
 | Suitability | 4.79 / 5 |
 
-📷 **Insert Graph (e.g., mAP or confusion matrix) Here:**
-> ![Performance Graph](images/performance.jpg)
+> ![Performance Graph](./assets-for-readme/matrix.jpg)
 
 ---
 
@@ -100,14 +96,11 @@ A custom Android app displays:
 
 Tested in:
 - Legazpi City 🚦
-- Polangui 🛣️  
+- Ligao 🛣️  
 Under real-world urban and semi-rural traffic scenarios. Designed for cyclists like:
-- 🚴‍♀️ Students  
-- 📦 Delivery personnel  
 - 🧍‍♂️ Local commuters
 
-📷 **Insert Field Testing Photo Here:**
-> ![Field Testing](images/field-testing.jpg)
+> ![Field Testing](./assets-for-readme/simulation.gif)
 
 ---
 
