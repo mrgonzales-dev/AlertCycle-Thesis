@@ -1,0 +1,9 @@
+{"id":1,"name":"bus"} 
+{"id":2,"name":"car"}
+{"id":3,"name":"cyclist"}
+{"id":4,"name":"electric_car"}
+{"id":5,"name":"jeep"}
+{"id":6,"name":"motor"}
+{"id":7,"name":"pedicab"}
+{"id":8,"name":"tricycle"}
+{"id":9,"name":"truck"}

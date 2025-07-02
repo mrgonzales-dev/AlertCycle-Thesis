@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Graph Point Receiver</title>
+    <style>
+      canvas {
+        border: 1px solid black;
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id="graphCanvas" width="640" height="640"></canvas>
+    <br />
+    <input type="text" id="xCoord" placeholder="Enter X coordinate" />
+    <input type="text" id="yCoord" placeholder="Enter Y coordinate" />
+    <button onclick="addPointFromInput()">Add Point</button>
+    <button onclick="addHardcodedPoints()">Add Hardcoded Points</button>
+    <button onclick="clearCanvas()">Clear</button>
+
+    <script>
+      const canvas = document.getElementById("graphCanvas");
+      const ctx = canvas.getContext("2d");
+
+      // Function to draw a point on the canvas
+      function drawPoint(x, y) {
+        ctx.beginPath();
+        ctx.arc(x, y, 5, 0, Math.PI * 2);
+        ctx.fillStyle = "red";
+        ctx.fill();
+        ctx.stroke();
+      }
+
+      // Function to clear the canvas
+      function clearCanvas() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+      }
+
+      // Event listener to capture click coordinates and draw points
+      canvas.addEventListener("click", (event) => {
+        const rect = canvas.getBoundingClientRect();
+        const x = event.clientX - rect.left;
+        const y = event.clientY - rect.top;
+        drawPoint(x, y);
+        console.log(`Point added at: (${x}, ${y})`);
+      });
+
+      // Function to add point from user input
+      function addPointFromInput() {
+        const x = parseInt(document.getElementById("xCoord").value);
+        const y = parseInt(document.getElementById("yCoord").value);
+        if (
+          !isNaN(x) &&
+          !isNaN(y) &&
+          x >= 0 &&
+          x <= 640 &&
+          y >= 0 &&
+          y <= 640
+        ) {
+          drawPoint(x, y);
+
+          console.log(`Point added at: (${x}, ${y})`);
+        } else {
+          alert("Please enter valid coordinates between 0 and 640.");
+        }
+      }
+
+      // Function to add hardcoded points
+      function addHardcodedPoints() {
+        const hardcodedPoints = [
+          { x: 100, y: 100 },
+          { x: 200, y: 200 },
+          { x: 300, y: 300 },
+          { x: 400, y: 400 },
+        ];
+        hardcodedPoints.forEach((point) => drawPoint(point.x, point.y));
+      }
+    </script>
+  </body>
+</html>

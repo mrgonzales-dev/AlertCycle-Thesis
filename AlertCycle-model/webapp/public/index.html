@@ -1,0 +1,229 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>
+      Real-Time Object Detection Data (Top-Down 3D View Based on mDA)
+    </title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        text-align: center;
+        margin: 20px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        background: radial-gradient(
+          circle,
+          #ffffff,
+          #a31d1d 20%,
+          green 40%,
+          #191b1c 60%
+        );
+        height: 100vh;
+      }
+      .radar-interface {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 100%;
+      }
+      canvas {
+        border: 0px solid black;
+        margin-bottom: 0px;
+      }
+      #coordinates {
+        color: white;
+        font-size: 18px;
+        max-width: 600px;
+        text-align: left;
+        overflow: hidden;
+        max-height: 200px;
+        background: rgba(255, 255, 255, 0.3); /* White with 30% opacity */
+        backdrop-filter: blur(10px); /* Blur effect */
+        border-radius: 10px; /* Optional: Rounded corners */
+        padding: 10px; /* Optional: Add some padding */
+      }
+      .coordinate {
+        padding: 8px;
+        border-bottom: 1px solid #ccc;
+      }
+      .high-risk {
+        color: white;
+        font-weight: bold;
+      }
+      .low-risk {
+        color: white;
+        font-weight: bold;
+      }
+      .bike-icon {
+        width: 300px;
+        height: 300px;
+        background: url("icons/cyclist-origin-icon.png") no-repeat center;
+        background-size: contain;
+        margin-top: 0px;
+        filter: drop-shadow(0px 50px 50px rgba(255, 255, 255, 1));
+      }
+      h1 {
+        font-weight: bold;
+        font-size: 50px;
+        margin-top: 10px;
+        color: white;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>ALERT CYCLE DEVICE</h1>
+
+    <div class="radar-interface">
+      <canvas id="graphCanvas"></canvas>
+      <div class="bike-icon"></div>
+      <div id="coordinates"><p>Loading data...</p></div>
+    </div>
+
+    <script>
+      // Set resolution variables
+      const canvasWidth = 768;
+      const canvasHeight = 900;
+
+      // Set canvas size dynamically
+      const canvas = document.getElementById("graphCanvas");
+      canvas.width = canvasWidth;
+      canvas.height = canvasHeight;
+
+      const ctx = canvas.getContext("2d");
+      let points = []; // Array to store points
+
+      // Function to fetch detected object data from the server
+      function fetchData() {
+        fetch("/api/data")
+          .then((response) => response.json())
+          .then((data) => {
+            const coordinatesDiv = document.getElementById("coordinates");
+            coordinatesDiv.innerHTML = ""; // Clear previous data
+
+            if (data.length === 0) {
+              coordinatesDiv.innerHTML = "<p>No objects detected.</p>";
+              return;
+            }
+
+            points = []; // Clear previous points array
+            data.forEach((obj) => {
+              const { object_class, x, y, mDA, risk } = obj;
+              points.push({ object_class, x, y, mDA, risk }); // Store points
+              console.log("Object: " + object_class);
+              const coordText = `Class: ${object_class} | (x: ${x}, y: ${y}) | Depth Avg: ${mDA} | Risk: ${risk ? "High" : "Low"}`;
+              const coordElement = document.createElement("div");
+              coordElement.classList.add("coordinate");
+              if (risk) coordElement.classList.add("high-risk");
+              if (!risk) coordElement.classList.add("low-risk");
+              coordElement.textContent = coordText;
+              coordinatesDiv.appendChild(coordElement);
+            });
+            redrawCanvas(); // Redraw all points
+          })
+          .catch((error) => console.error("Error fetching data:", error));
+      }
+
+      function drawPoint(object_class, x, y, mDA, risk) {
+        mDA = Math.round(mDA);
+        const iconMap = {
+          car: { src: "icons/car-icon.png", width: 150, height: 260 },
+          cyclist: { src: "icons/motorist-icon.png", width: 170, height: 260 },
+          motor: { src: "icons/motorist-icon.png", width: 170, height: 260 },
+          tricycle: { src: "icons/tricycle-icon.png", width: 200, height: 200 },
+          truck: { src: "icons/truck-icon.png", width: 70, height: 70 },
+        };
+
+        let iconData = iconMap[object_class];
+        if (!iconData) return; // Prevent errors for unknown objects
+
+        let img = new Image();
+        img.src = iconData.src;
+
+        scaledWidth = iconData.width;
+        scaledHeight = iconData.height;
+
+        img.onload = function () {
+          const canvasHeight = ctx.canvas.height;
+
+          mDA = Math.max(0, Math.min(100, mDA)); // Clamp between 0-100
+          let yPos = (canvasHeight - (iconData.height - 50)) * (mDA / 100);
+          if (!iconData || object_class == "none") {
+            ctx.drawImage(img, 0, 0, 0, 0);
+          } else {
+            ctx.drawImage(img, x, yPos, scaledWidth, scaledHeight);
+          }
+
+          console.log(
+            `Object: ${object_class} | Coordinates: ${x} : ${yPos} | mDA: ${mDA} | Size: ${scaledWidth}x${scaledHeight}`,
+          );
+        };
+      }
+
+      function drawRuler() {
+        ctx.strokeStyle = "black";
+        ctx.font = "12px Arial";
+        ctx.fillStyle = "black";
+
+        // Draw x-axis ruler (bottom)
+        for (let x = 0; x <= canvas.width; x += 50) {
+          ctx.beginPath();
+          ctx.moveTo(x, canvas.height - 5);
+          ctx.lineTo(x, canvas.height);
+          ctx.stroke();
+          ctx.fillText(x, x + 2, canvas.height - 10);
+        }
+
+        // Draw y-axis ruler (left side, from bottom up)
+        for (let y = 0; y <= canvas.height; y += 20) {
+          let yPos = canvas.height - y; // Flip the coordinate system
+          ctx.beginPath();
+          ctx.moveTo(0, yPos);
+          ctx.lineTo(5, yPos);
+          ctx.stroke();
+          ctx.fillText(y, 10, yPos - 2);
+        }
+      }
+      // Function to redraw canvas with stored points
+      function redrawCanvas() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height); // Clear canvas
+
+        // Define an upright triangle clipping area
+        ctx.beginPath();
+        ctx.moveTo(0, 0); // Top left
+        ctx.lineTo(canvas.width, 0); // Top right
+
+        // Define the smaller bottom edge
+        const bottomWidth = canvas.width * 1; // Adjust the percentage as needed
+        const bottomXStart = (canvas.width - bottomWidth) / 2;
+
+        ctx.lineTo(bottomXStart + bottomWidth, canvas.height); // Bottom right
+        ctx.lineTo(bottomXStart, canvas.height); // Bottom left
+
+        ctx.closePath();
+        ctx.clip(); // Apply the clipping mask
+
+        // Create gradient from bottom (red) to top (green)
+        let gradient = ctx.createLinearGradient(0, canvas.height, 0, 0);
+        gradient.addColorStop(0, "red"); // Bottom (origin)
+        gradient.addColorStop(1, "green"); // Top
+
+        // Fill canvas with gradient
+        ctx.fillStyle = gradient;
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        drawRuler(); // Redraw rulers
+        points.forEach(({ object_class, x, y, mDA, risk }) =>
+          drawPoint(object_class, x, y, mDA, risk),
+        ); // Redraw objects
+      }
+
+      // Fetch data every 500ms for real-time updates
+      setInterval(fetchData, 500);
+
+      // Function to clear the canvas and reset points
+    </script>
+  </body>
+</html>

@@ -1,0 +1,14 @@
+opencv-python
+torch
+numpy
+matplotlib
+Pillow
+torchvision
+ultralytics
+numpy
+torch 
+torchvision
+scikit-image
+onnx>=1.12.0
+onnxslim
+onnxruntime
