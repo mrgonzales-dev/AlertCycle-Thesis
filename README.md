@@ -153,3 +153,9 @@ Huge thanks to:
 - **Jonel O. Olayes** – Designer & UX Feedback 🧠
 
 
+---
+
+🎥 **[📥 Click here to download full presentation video](./assets-for-readme/video_presentation.mp4)**
+> _Includes full system demo, explanation, and highlights of real-world testing!_
+
+---
